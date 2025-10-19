@@ -1,5 +1,4 @@
-// sw.js
-const CACHE = 'pm-billbook-v5'; // bump this when you change index.html
+const CACHE = 'pm-billbook-v6';
 const ASSETS = [
   './',
   './index.html',
