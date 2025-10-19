@@ -1,4 +1,5 @@
-const CACHE = 'pm-billbook-v4';
+// sw.js
+const CACHE = 'pm-billbook-v5'; // bump this when you change index.html
 const ASSETS = [
   './',
   './index.html',
@@ -26,7 +27,7 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   const req = event.request;
 
-  // Network-first for navigations (ensures updated index.html), fallback to cache when offline
+  // Network-first for navigations; fallback to cached shell when offline
   if (req.mode === 'navigate') {
     event.respondWith(
       fetch(req).catch(() => caches.match('./index.html'))
@@ -35,7 +36,5 @@ self.addEventListener('fetch', (event) => {
   }
 
   // Other requests: try network, fallback to cache
-  event.respondWith(
-    fetch(req).catch(() => caches.match(req))
-  );
+  event.respondWith(fetch(req).catch(() => caches.match(req)));
 });
