@@ -11,7 +11,7 @@
   <link rel="manifest" href="manifest.webmanifest" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-  <link rel="apple-touch-icon" href="https://brsujit.github.io/messages/logo/kriya_logo_192.png" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -62,9 +62,7 @@
           <div class="space-y-4">
             <div>
               <label for="bookSelect" class="block text-sm font-medium text-gray-700">Select a book</label>
-              <select id="bookSelect" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
-                <!-- Options populated by JS -->
-              </select>
+              <select id="bookSelect" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"></select>
             </div>
             <div class="grid grid-cols-2 gap-4">
               <div>
@@ -235,18 +233,12 @@
     // ===== Password Gate =====
     (function () {
       const CORRECT_PASSWORD = 'prajnana';
-
       function setupPasswordGate() {
         const passwordModal = document.getElementById('password-modal');
         const passwordInput = document.getElementById('password-input');
         const loginBtn = document.getElementById('login-btn');
         const mainContent = document.getElementById('main-content');
         const errorMessage = document.getElementById('error-message');
-
-        if (!passwordModal || !passwordInput || !loginBtn || !mainContent) {
-          console.error('[PasswordGate] Missing DOM elements.');
-          return;
-        }
 
         const unlock = () => {
           const v = (passwordInput.value || '').trim();
@@ -269,7 +261,6 @@
         mainContent.classList.add('hidden');
         setTimeout(() => passwordInput.focus(), 0);
       }
-
       if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', setupPasswordGate);
       } else {
@@ -340,9 +331,9 @@
       const getFormattedDate = () => {
         const today = new Date();
         const d = String(today.getDate()).padStart(2, '0');
-        const m = String(today.getMonth() + 1).padStart(2, '0');
+        the_m = String(today.getMonth() + 1).padStart(2, '0');
         const y = today.getFullYear();
-        return `${d}/${m}/${y}`;
+        return `${d}/${the_m}/${y}`;
       };
 
       const getTodayId = () => {
@@ -384,7 +375,6 @@
         try { localStorage.setItem(LOG_STORAGE_KEY, JSON.stringify(salesLogDatabase)); }
         catch (e) { console.warn('Could not persist sales log:', e); }
       };
-
       const loadSalesLog = () => {
         try {
           const raw = localStorage.getItem(LOG_STORAGE_KEY);
@@ -498,51 +488,27 @@
             dueAmount: due
           });
         });
-        persistSalesLog();
-        console.log(`Invoice ${invoiceNo} saved to log. Log entries: ${salesLogDatabase.length}`);
+        try { localStorage.setItem(LOG_STORAGE_KEY, JSON.stringify(salesLogDatabase)); } catch {}
       };
 
+      // Download log
       const handleDownloadFullLog = () => {
         if (salesLogDatabase.length === 0) {
           alert('The sales log is empty. Save an invoice first by printing it.');
           return;
         }
-
-        const data = [
-          ["Invoice No", "Date", "Customer", "#", "Book Title", "Author", "Qty", "Rate (₹)", "Amount (₹)", "Invoice Total", "Paid Amount", "Due Amount"]
-        ];
-
+        const data = [["Invoice No","Date","Customer","#","Book Title","Author","Qty","Rate (₹)","Amount (₹)","Invoice Total","Paid Amount","Due Amount"]];
         salesLogDatabase.forEach(entry => {
-          data.push([
-            entry.invoiceNo,
-            entry.date,
-            entry.customer,
-            entry.itemNo,
-            entry.title,
-            entry.author,
-            entry.qty,
-            entry.rate.toFixed(2),
-            entry.amount.toFixed(2),
-            entry.total.toFixed(2),
-            entry.paidAmount.toFixed(2),
-            entry.dueAmount.toFixed(2)
-          ]);
+          data.push([entry.invoiceNo,entry.date,entry.customer,entry.itemNo,entry.title,entry.author,entry.qty,entry.rate.toFixed(2),entry.amount.toFixed(2),entry.total.toFixed(2),entry.paidAmount.toFixed(2),entry.dueAmount.toFixed(2)]);
         });
-
         const ws = XLSX.utils.aoa_to_sheet(data);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "SalesLog");
-
-        const today = new Date();
-        const d = String(today.getDate()).padStart(2, '0');
-        const m = String(today.getMonth() + 1).padStart(2, '0');
-        const y = today.getFullYear();
-        const filename = `PrajnanaMission_SalesLog_${y}${m}${d}.xlsx`;
-
-        XLSX.writeFile(wb, filename);
+        const t=new Date(); const fn=`PrajnanaMission_SalesLog_${t.getFullYear()}${String(t.getMonth()+1).padStart(2,'0')}${String(t.getDate()).padStart(2,'0')}.xlsx`;
+        XLSX.writeFile(wb, fn);
       };
 
-      // --- WhatsApp helpers ---
+      // WhatsApp helpers
       const buildWhatsAppMessage = () => {
         const invoiceNo = invoiceNumberEl.textContent.trim();
         const date = invoiceDateEl.textContent.trim();
@@ -573,106 +539,99 @@ Due: ₹${due.toFixed(2)}
 
 Thank you for your support.`;
       };
-
       const getWhatsAppPhone = () => {
         const code = (countryCodeEl.value || '').replace(/[^\d]/g, '');
         const num = (whatsappNumberEl.value || '').replace(/[^\d]/g, '');
         if (!num) return '';
-        const finalCode = code || '91';
-        return `${finalCode}${num}`;
+        return `${code || '91'}${num}`;
       };
-
       const buildWhatsAppURL = (phone, msg) => {
         const enc = encodeURIComponent(msg);
-        if (phone) return `https://wa.me/${phone}?text=${enc}`;
-        return `https://wa.me/?text=${enc}`;
+        return phone ? `https://wa.me/${phone}?text=${enc}` : `https://wa.me/?text=${enc}`;
       };
-
       const openWhatsAppSafely = (url, waWinHandle) => {
-        try {
-          if (waWinHandle && !waWinHandle.closed) {
-            waWinHandle.location = url;
-          } else {
-            window.open(url, '_blank');
-          }
-        } catch (e) {
-          console.warn('Fallback open due to popup restriction:', e);
-          window.open(url, '_blank');
-        }
+        try { if (waWinHandle && !waWinHandle.closed) waWinHandle.location = url; else window.open(url, '_blank'); }
+        catch { window.open(url, '_blank'); }
       };
 
-      // --- Initialize invoice meta ---
+      // Initialize invoice meta
       const initialize = () => {
+        const t=new Date(); const d=String(t.getDate()).padStart(2,'0'); const m=String(t.getMonth()+1).padStart(2,'0'); const y=t.getFullYear();
         loadInvoiceCounter();
-        invoiceDateEl.textContent = getFormattedDate();
+        invoiceDateEl.textContent = `${d}/${m}/${y}`;
         invoiceNumberEl.textContent = getInvoiceNumber();
       };
 
-      // --- EVENT LISTENERS ---
+      // Listeners
       addItemBtn.addEventListener('click', handleAddItem);
       downloadLogBtn.addEventListener('click', handleDownloadFullLog);
       bookSelectEl.addEventListener('change', handleBookSelection);
-
       customerNameEl.addEventListener('input', renderBill);
       customerAddressEl.addEventListener('input', renderBill);
       countryCodeEl.addEventListener('input', renderBill);
       whatsappNumberEl.addEventListener('input', renderBill);
       amountPaidEl.addEventListener('input', renderBill);
-
       invoiceItemsEl.addEventListener('click', (e) => {
-        const deleteButton = e.target.closest('.delete-item-btn');
-        if (deleteButton) {
-          const indexToDelete = parseInt(deleteButton.dataset.index, 10);
-          billItems.splice(indexToDelete, 1);
-          renderBill();
-        }
+        const btn = e.target.closest('.delete-item-btn');
+        if (btn) { const i = parseInt(btn.dataset.index, 10); billItems.splice(i, 1); renderBill(); }
       });
 
       // Print/Save/Send
       printBtn.addEventListener('click', () => {
-        if (billItems.length === 0) {
-          alert('Your bill is empty. Please add items before printing/sending.');
-          return;
-        }
-
+        if (billItems.length === 0) { alert('Your bill is empty. Please add items before printing/sending.'); return; }
         handleSaveLog();
-
         const phone = getWhatsAppPhone();
         const msg = buildWhatsAppMessage();
         const waUrl = buildWhatsAppURL(phone, msg);
-
         const waWin = window.open('about:blank', '_blank');
-        let sentAlready = false;
-        const doSend = () => {
-          if (sentAlready) return;
-          sentAlready = true;
-          window.removeEventListener('afterprint', doSend);
-          openWhatsAppSafely(waUrl, waWin);
-        };
-
+        let sent = false;
+        const doSend = () => { if (sent) return; sent = true; window.removeEventListener('afterprint', doSend); openWhatsAppSafely(waUrl, waWin); };
         window.addEventListener('afterprint', doSend);
         window.print();
         setTimeout(doSend, 1500);
       });
 
-      // --- INITIALIZATION ---
-      loadSalesLog();
+      // Boot
+      try { const raw = localStorage.getItem(LOG_STORAGE_KEY); salesLogDatabase = raw ? JSON.parse(raw) : []; } catch {}
       populateBookDropdown();
       initialize();
       renderBill();
     });
 
-    // ===== PWA registration + Install button (needs manifest.webmanifest + sw.js) =====
+    // ===== PWA: Register SW + Install diagnostics =====
     (function () {
       const installBtn = document.getElementById('installAppBtn');
-      const installHint = document.getElementById('installHint');
+      const hint = document.getElementById('installHint');
       let deferredPrompt = null;
+      let bipFired = false;
+
+      const setHint = (msg) => { if (hint) hint.textContent = msg; };
+
+      // Quick checks to help you debug paths
+      async function checkFiles() {
+        try {
+          const m = await fetch('manifest.webmanifest', { cache: 'no-store' });
+          if (!m.ok) setHint('manifest.webmanifest not found at /gitaexam/.');
+        } catch { setHint('manifest.webmanifest not reachable.'); }
+        try {
+          const s = await fetch('sw.js', { cache: 'no-store' });
+          if (!s.ok) setHint('sw.js not found at /gitaexam/.');
+        } catch { setHint('sw.js not reachable.'); }
+      }
+      checkFiles();
 
       if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          navigator.serviceWorker.register('./sw.js')
-            .then(reg => console.log('[SW] registered:', reg.scope))
-            .catch(err => console.error('[SW] registration failed:', err));
+        window.addEventListener('load', async () => {
+          try {
+            const reg = await navigator.serviceWorker.register('./sw.js');
+            console.log('[SW] registered:', reg.scope);
+            if (!navigator.serviceWorker.controller) {
+              setHint('Installed SW. Reload once to enable Install.');
+            }
+          } catch (err) {
+            console.error('[SW] registration failed:', err);
+            setHint('SW registration failed (see console).');
+          }
         });
       }
 
@@ -684,19 +643,25 @@ Thank you for your support.`;
         if (isStandalone) {
           installBtn.textContent = 'Installed';
           installBtn.disabled = true;
-          installHint.textContent = 'App is already installed.';
+          setHint('App is already installed.');
         } else if (isIos) {
-          installHint.textContent = 'On iPhone/iPad: Share > Add to Home Screen.';
+          installBtn.disabled = false;
+          installBtn.textContent = 'How to Install (iOS)';
+          setHint('On iPhone/iPad: Share > Add to Home Screen.');
+          installBtn.addEventListener('click', () => {
+            alert('On iPhone/iPad: tap the Share icon, then “Add to Home Screen”.');
+          }, { once: true });
         }
       }
 
       window.addEventListener('beforeinstallprompt', (e) => {
         e.preventDefault();
         deferredPrompt = e;
+        bipFired = true;
         if (installBtn) {
           installBtn.disabled = false;
           installBtn.textContent = 'Install App';
-          installHint.textContent = 'Tap Install App to add to home screen.';
+          setHint('Tap Install App to add to home screen.');
         }
         console.log('[PWA] beforeinstallprompt fired');
       });
@@ -707,10 +672,14 @@ Thank you for your support.`;
           const choice = await deferredPrompt.userChoice;
           console.log('[PWA] userChoice:', choice.outcome);
           deferredPrompt = null;
+          if (choice.outcome !== 'accepted') {
+            setHint('Install dismissed. You can try again from the browser menu.');
+          }
         } else if (!navigator.serviceWorker.controller) {
-          alert('Almost there! Reload the page once so the app can be installed.');
+          setHint('Reload once so the Service Worker can control the page.');
+          alert('Almost there! Please reload the page once so the app can be installed.');
         } else if (!isIos) {
-          alert('If no prompt appears, use your browser menu: “Install app”.');
+          alert('If no prompt appears, use the browser menu: “Install app”.');
         }
       });
 
@@ -719,9 +688,20 @@ Thank you for your support.`;
         if (installBtn) {
           installBtn.textContent = 'Installed';
           installBtn.disabled = true;
-          installHint.textContent = 'App installed successfully.';
+          setHint('App installed successfully.');
         }
       });
+
+      // After 4s, if no prompt fired (Android/Chrome), tell what’s missing
+      setTimeout(() => {
+        if (!bipFired && !isIos && !isStandalone) {
+          if (!navigator.serviceWorker.controller) {
+            setHint('Service Worker is not controlling the page yet. Reload once.');
+          } else {
+            setHint('Install prompt not available. Check manifest and icons exist.');
+          }
+        }
+      }, 4000);
     })();
   </script>
 </body>
