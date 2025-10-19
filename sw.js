@@ -1,5 +1,4 @@
-// sw.js
-const CACHE = 'pm-billbook-v3';
+const CACHE = 'pm-billbook-v4';
 const ASSETS = [
   './',
   './index.html',
@@ -27,7 +26,7 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   const req = event.request;
 
-  // Network-first for navigations, fall back to cached shell
+  // Network-first for navigations (ensures updated index.html), fallback to cache when offline
   if (req.mode === 'navigate') {
     event.respondWith(
       fetch(req).catch(() => caches.match('./index.html'))
@@ -35,7 +34,7 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Others: try network, fallback to cache
+  // Other requests: try network, fallback to cache
   event.respondWith(
     fetch(req).catch(() => caches.match(req))
   );
