@@ -201,39 +201,73 @@
                          Thank you for your invaluable support and dedication. We are deeply grateful for your efforts. May the choicest blessings of God, Gurus and Bhagavat Gita be upon you always.
                     </div>
                 </div>
-                 <!-- Install App Button -->
-                <div class="mt-6 text-center no-print">
-                    <button id="installAppBtn" class="bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-colors duration-300 disabled:bg-gray-400 disabled:cursor-not-allowed">
-                        Install in your mobile phone
-                    </button>
-                    <p class="text-xs text-center text-gray-500 mt-2 no-print">Button becomes active if your browser supports installation.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // --- PWA Install Logic ---
-            let deferredPrompt;
-            const installAppBtn = document.getElementById('installAppBtn');
-            installAppBtn.disabled = true;
+                 <script>
+// PWA: service worker + install prompt
+(function () {
+  const installAppBtn = document.getElementById('installAppBtn');
+  let deferredPrompt = null;
 
-            window.addEventListener('beforeinstallprompt', (e) => {
-                e.preventDefault();
-                deferredPrompt = e;
-                installAppBtn.disabled = false;
-            });
+  // Register SW with scope = /gitaexam/ by using a relative path
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js')
+        .then(reg => console.log('SW registered:', reg.scope))
+        .catch(err => console.error('SW registration failed:', err));
+    });
+  }
 
-            installAppBtn.addEventListener('click', () => {
-                if (!deferredPrompt) return;
-                deferredPrompt.prompt();
-                deferredPrompt.userChoice.then(() => {
-                    deferredPrompt = null;
-                    installAppBtn.disabled = true;
-                });
-            });
+  const isIos = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
 
+  // Initial button state
+  if (installAppBtn) {
+    installAppBtn.disabled = true;
+    if (isStandalone) {
+      installAppBtn.textContent = 'Installed';
+      installAppBtn.disabled = true;
+    }
+  }
+
+  window.addEventListener('beforeinstallprompt', (e) => {
+    // Chrome fires this when app is installable (needs SW + valid manifest)
+    e.preventDefault();
+    deferredPrompt = e;
+    if (installAppBtn) {
+      installAppBtn.disabled = false;
+      installAppBtn.textContent = 'Install App';
+    }
+    console.log('beforeinstallprompt fired');
+  });
+
+  if (installAppBtn) {
+    installAppBtn.addEventListener('click', async () => {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        const choice = await deferredPrompt.userChoice;
+        console.log('User choice:', choice.outcome);
+        deferredPrompt = null;
+        // Optionally disable after use:
+        // installAppBtn.disabled = true;
+      } else {
+        // Fallback/help text
+        if (isIos && !isStandalone) {
+          alert('On iPhone/iPad: tap the Share button, then “Add to Home Screen” to install.');
+        } else {
+          alert('If the install prompt does not appear, reload once so the service worker can take control. You can also use the browser’s Install option.');
+        }
+      }
+    });
+  }
+
+  window.addEventListener('appinstalled', () => {
+    console.log('App installed');
+    if (installAppBtn) {
+      installAppBtn.textContent = 'Installed';
+      installAppBtn.disabled = true;
+    }
+  });
+})();
+</script>
             // --- PASSWORD PROTECTION ---
             const passwordModal = document.getElementById('password-modal');
             const passwordInput = document.getElementById('password-input');
@@ -649,3 +683,4 @@ Thank you for your support.`;
 </body>
 
 </html>
+
