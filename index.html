@@ -3,12 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-
   <title>Prajnana Mission Bill Book</title>
 
   <!-- PWA -->
   <meta name="theme-color" content="#4f46e5" />
-  <link rel="manifest" href="manifest.webmanifest?v=10" />
+  <link rel="manifest" href="manifest.webmanifest" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <link rel="apple-touch-icon" href="https://brsujit.github.io/messages/logo/kriya_logo_192.png" />
@@ -42,9 +41,7 @@
       <h2 class="text-xl sm:text-2xl font-bold text-center text-gray-800 mb-4 sm:mb-6">Enter Password</h2>
       <div class="space-y-4">
         <input type="password" id="password-input" class="mt-1 block w-full px-4 py-3 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Password">
-        <button id="login-btn" class="w-full bg-indigo-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-300">
-          Login
-        </button>
+        <button id="login-btn" class="w-full bg-indigo-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-300">Login</button>
         <p id="error-message" class="text-red-500 text-sm text-center mt-2 hidden">Incorrect password. Please try again.</p>
       </div>
     </div>
@@ -97,7 +94,7 @@
                 <input type="text" id="countryCode" value="91" inputmode="numeric" pattern="[0-9]*" maxlength="4" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="e.g., 91">
               </div>
               <div>
-                <label for="whatsappNumber" class="block text-sm font-medium text-gray-700">WhatsApp No</label>
+                <label for="whatsappNumber" class="block text sm font-medium text-gray-700">WhatsApp No</label>
                 <input type="text" id="whatsappNumber" inputmode="numeric" pattern="[0-9]*" maxlength="15" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="e.g., 8598899371">
               </div>
             </div>
@@ -113,17 +110,9 @@
         <div>
           <h2 class="text-lg sm:text-xl font-bold text-gray-800 mb-4 border-b pb-2">Actions</h2>
           <div class="space-y-3">
-            <button id="addItemBtn" class="w-full bg-orange-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 transition-colors duration-300">
-              Add Item to Bill
-            </button>
-
-            <button id="printBtn" class="w-full bg-green-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors duration-300">
-              Print/Save/Send
-            </button>
-
-            <button id="downloadLogBtn" class="w-full bg-teal-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 transition-colors duration-300">
-              Download Full Log (Excel)
-            </button>
+            <button id="addItemBtn" class="w-full bg-orange-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 transition-colors duration-300">Add Item to Bill</button>
+            <button id="printBtn" class="w-full bg-green-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors duration-300">Print/Save/Send</button>
+            <button id="downloadLogBtn" class="w-full bg-teal-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 transition-colors duration-300">Download Full Log (Excel)</button>
           </div>
         </div>
 
@@ -141,7 +130,6 @@
       <!-- Right Column: Invoice Preview -->
       <div class="lg:col-span-8">
         <div id="invoice-print-area" class="bg-white p-4 sm:p-6 lg:p-8 rounded-xl shadow-lg">
-          <!-- Header -->
           <div class="flex items-center mb-6 lg:mb-8 border-b pb-4 lg:pb-6 space-x-4">
             <img src="https://brsujit.github.io/messages/logo/kriya_logo.jpeg" alt="Prajnana Mission Logo" class="h-16 sm:h-20 lg:h-24 w-auto">
             <div class="min-w-0">
@@ -150,7 +138,6 @@
             </div>
           </div>
 
-          <!-- Customer & Invoice -->
           <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-6 lg:mb-8 text-sm">
             <div class="max-w-full sm:max-w-[65%]">
               <p class="font-bold text-gray-700">Customer:</p>
@@ -175,7 +162,6 @@
             </div>
           </div>
 
-          <!-- Table (responsive) -->
           <div class="w-full overflow-x-auto">
             <table class="min-w-[680px] w-full text-left">
               <thead>
@@ -189,14 +175,11 @@
                 </tr>
               </thead>
               <tbody id="invoiceItems" class="divide-y">
-                <tr id="empty-message">
-                  <td colspan="6" class="text-center p-8 sm:p-16 text-gray-400">Your bill is empty.</td>
-                </tr>
+                <tr id="empty-message"><td colspan="6" class="text-center p-8 sm:p-16 text-gray-400">Your bill is empty.</td></tr>
               </tbody>
             </table>
           </div>
 
-          <!-- Totals -->
           <div class="flex justify-end mt-6 lg:mt-8">
             <div class="w-full sm:w-2/3 lg:w-2/5 space-y-3 text-sm">
               <div class="flex justify-between border-b pb-2 text-base">
@@ -214,12 +197,10 @@
             </div>
           </div>
 
-          <!-- QR -->
           <div class="mt-6 lg:mt-8">
             <img src="QRcode.jpg" alt="QR Code" class="responsive-img w-[200px] h-auto">
           </div>
 
-          <!-- Note -->
           <div class="text-center text-xs print:text-[10px] text-gray-500 mt-6 lg:mt-8 pt-4 lg:pt-6 border-t">
             Thank you for your invaluable support and dedication. We are deeply grateful for your efforts. May the choicest blessings of God, Gurus and Bhagavat Gita be upon you always.
           </div>
@@ -233,62 +214,47 @@
     // ===== Password Gate =====
     (function () {
       const CORRECT_PASSWORD = 'prajnana';
-
       function setupPasswordGate() {
         const passwordModal = document.getElementById('password-modal');
         const passwordInput = document.getElementById('password-input');
         const loginBtn = document.getElementById('login-btn');
         const mainContent = document.getElementById('main-content');
-        const errorMessage = document.getElementById('error-message');
-
+        const err = document.getElementById('error-message');
         const unlock = () => {
           const v = (passwordInput.value || '').trim();
           if (v.toLowerCase() === CORRECT_PASSWORD.toLowerCase()) {
             passwordModal.classList.add('hidden');
             mainContent.classList.remove('hidden');
-            errorMessage?.classList.add('hidden');
+            err?.classList.add('hidden');
           } else {
-            errorMessage?.classList.remove('hidden');
-            passwordInput.value = '';
-            passwordInput.focus();
+            err?.classList.remove('hidden');
+            passwordInput.value = ''; passwordInput.focus();
           }
         };
-
         loginBtn.addEventListener('click', unlock);
-        passwordInput.addEventListener('keyup', (e) => { if (e.key === 'Enter') unlock(); });
-        passwordInput.addEventListener('input', () => errorMessage?.classList.add('hidden'));
-
-        passwordModal.classList.remove('hidden');
-        mainContent.classList.add('hidden');
+        passwordInput.addEventListener('keyup', e => { if (e.key === 'Enter') unlock(); });
+        passwordInput.addEventListener('input', () => err?.classList.add('hidden'));
+        passwordModal.classList.remove('hidden'); mainContent.classList.add('hidden');
         setTimeout(() => passwordInput.focus(), 0);
       }
-
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', setupPasswordGate);
-      } else {
-        setupPasswordGate();
-      }
+      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', setupPasswordGate); else setupPasswordGate();
     })();
 
     // ===== Main App =====
     document.addEventListener('DOMContentLoaded', function () {
-      // --- BOOK DATABASE ---
       const booksDB = [
         { id: 'default', title: 'Select a Book...', author: '', rate: 0 },
-        { id: '1', title: 'Shrimad Bhagavat Gita, Chapter-5', author: 'Paramahamsa Prajnanananda', rate: 50.00 },
+        { id: '1', title: 'Shrimad Bhagavat Gita, Chapter-5', author: 'Paramahamsa Prajnanananda', rate: 50.00 }
       ];
 
-      // --- STATE ---
       let billItems = [];
       let salesLogDatabase = [];
       let invoiceCounter = 1;
 
-      // --- STORAGE KEYS ---
-      const LOG_STORAGE_KEY = 'pm_billbook_sales_log_v1';
-      const INVOICE_COUNTER_KEY = 'pm_billbook_invoice_counter_v1';
-      const INVOICE_DATE_KEY = 'pm_billbook_invoice_date_v1';
+      const LOG_KEY = 'pm_billbook_sales_log_v1';
+      const INV_COUNTER_KEY = 'pm_billbook_invoice_counter_v1';
+      const INV_DATE_KEY = 'pm_billbook_invoice_date_v1';
 
-      // --- DOM ELEMENTS ---
       const bookSelectEl = document.getElementById('bookSelect');
       const quantityEl = document.getElementById('quantity');
       const rateEl = document.getElementById('rate');
@@ -312,59 +278,31 @@
       const invoiceContactBlock = document.getElementById('invoiceContactBlock');
       const invoiceContactEl = document.getElementById('invoiceContact');
 
-      // --- UTILS ---
-      const populateBookDropdown = () => {
-        booksDB.forEach(book => {
-          const option = document.createElement('option');
-          option.value = book.id;
-          option.textContent = book.title;
-          bookSelectEl.appendChild(option);
-        });
-      };
-
-      const handleBookSelection = () => {
-        const selectedBookId = bookSelectEl.value;
-        const selectedBook = booksDB.find(book => book.id === selectedBookId);
-        rateEl.value = selectedBook ? selectedBook.rate.toFixed(2) : '0.00';
-      };
-
-      const formatCurrency = (amount) => `₹ ${amount.toFixed(2)}`;
-
+      const formatCurrency = (amt) => `₹ ${amt.toFixed(2)}`;
       const getFormattedDate = () => {
-        const today = new Date();
-        const d = String(today.getDate()).padStart(2, '0');
-        const m = String(today.getMonth() + 1).padStart(2, '0');
-        const y = today.getFullYear();
+        const t = new Date(); const d = String(t.getDate()).padStart(2, '0'); const m = String(t.getMonth()+1).padStart(2, '0'); const y = t.getFullYear();
         return `${d}/${m}/${y}`;
       };
-
       const getTodayId = () => {
-        const t = new Date();
-        return `${t.getFullYear()}${String(t.getMonth()+1).padStart(2,'0')}${String(t.getDate()).padStart(2,'0')}`;
+        const t = new Date(); return `${t.getFullYear()}${String(t.getMonth()+1).padStart(2,'0')}${String(t.getDate()).padStart(2,'0')}`;
       };
-
       const loadInvoiceCounter = () => {
         const todayId = getTodayId();
-        const storedDate = localStorage.getItem(INVOICE_DATE_KEY);
+        const storedDate = localStorage.getItem(INV_DATE_KEY);
         if (storedDate === todayId) {
-          const storedCounter = parseInt(localStorage.getItem(INVOICE_COUNTER_KEY) || '1', 10);
-          invoiceCounter = isNaN(storedCounter) ? 1 : storedCounter;
+          const c = parseInt(localStorage.getItem(INV_COUNTER_KEY) || '1', 10);
+          invoiceCounter = isNaN(c) ? 1 : c;
         } else {
           invoiceCounter = 1;
-          localStorage.setItem(INVOICE_DATE_KEY, todayId);
-          localStorage.setItem(INVOICE_COUNTER_KEY, String(invoiceCounter));
+          localStorage.setItem(INV_DATE_KEY, todayId);
+          localStorage.setItem(INV_COUNTER_KEY, String(invoiceCounter));
         }
       };
-
       const getInvoiceNumber = () => {
-        const today = new Date();
-        const d = String(today.getDate()).padStart(2, '0');
-        const m = String(today.getMonth() + 1).padStart(2, '0');
-        const y = today.getFullYear();
-        const count = String(invoiceCounter).padStart(3, '0');
-        return `INV-${y}${m}${d}-${count}`;
+        const t = new Date(); const d = String(t.getDate()).padStart(2, '0'); const m = String(t.getMonth()+1).padStart(2, '0'); const y = t.getFullYear();
+        const c = String(invoiceCounter).padStart(3, '0');
+        return `INV-${y}${m}${d}-${c}`;
       };
-
       const getDisplayPhone = () => {
         const code = (countryCodeEl.value || '').replace(/[^\d]/g, '');
         const num = (whatsappNumberEl.value || '').replace(/[^\d]/g, '');
@@ -372,379 +310,34 @@
         return `+${code || '91'} ${num}`;
       };
 
-      // --- PERSISTENCE HELPERS ---
-      const persistSalesLog = () => {
-        try { localStorage.setItem(LOG_STORAGE_KEY, JSON.stringify(salesLogDatabase)); }
-        catch (e) { console.warn('Could not persist sales log:', e); }
-      };
+      const persistSalesLog = () => { try { localStorage.setItem(LOG_KEY, JSON.stringify(salesLogDatabase)); } catch {} };
+      const loadSalesLog = () => { try { salesLogDatabase = JSON.parse(localStorage.getItem(LOG_KEY) || '[]'); } catch { salesLogDatabase = []; } };
 
-      const loadSalesLog = () => {
-        try {
-          const raw = localStorage.getItem(LOG_STORAGE_KEY);
-          salesLogDatabase = raw ? JSON.parse(raw) : [];
-        } catch (e) {
-          console.warn('Could not load sales log:', e);
-          salesLogDatabase = [];
-        }
-      };
+      const populateBookDropdown = () => { booksDB.forEach(b => { const o = document.createElement('option'); o.value = b.id; o.textContent = b.title; bookSelectEl.appendChild(o); }); };
+      const handleBookSelection = () => { const b = booksDB.find(x => x.id === bookSelectEl.value); rateEl.value = b ? b.rate.toFixed(2) : '0.00'; };
 
-      // --- RENDER ---
       const renderBill = () => {
-        invoiceItemsEl.innerHTML = '';
-        const emptyMessageContent = `<tr id="empty-message"><td colspan="6" class="text-center p-8 sm:p-16 text-gray-400">Your bill is empty.</td></tr>`;
-
-        if (billItems.length === 0) {
-          invoiceItemsEl.innerHTML = emptyMessageContent;
-        } else {
-          billItems.forEach((item, index) => {
-            const tr = document.createElement('tr');
-            tr.className = "text-sm text-gray-700";
-            tr.innerHTML = `
-              <td class="p-2 sm:p-3">${index + 1}</td>
-              <td class="p-2 sm:p-3">
-                <span class="font-semibold break-words">${item.title}</span>
-                <span class="block text-xs text-gray-500 break-words">${item.author}</span>
-              </td>
-              <td class="p-2 sm:p-3 text-center">${item.qty}</td>
-              <td class="p-2 sm:p-3 text-right">${formatCurrency(item.rate)}</td>
-              <td class="p-2 sm:p-3 text-right font-semibold">${formatCurrency(item.amount)}</td>
-              <td class="p-2 sm:p-3 text-center no-print">
-                <button class="delete-item-btn text-red-500 hover:text-red-700" data-index="${index}" aria-label="Delete item ${index + 1}">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                  </svg>
-                </button>
-              </td>
-            `;
-            invoiceItemsEl.appendChild(tr);
-          });
-        }
-
-        const total = billItems.reduce((acc, item) => acc + item.amount, 0);
-        const paidAmount = parseFloat(amountPaidEl.value) || 0;
-        const dueAmount = total - paidAmount;
-
-        totalEl.textContent = formatCurrency(total);
-        paidAmountDisplayEl.textContent = formatCurrency(paidAmount);
-        dueAmountEl.textContent = formatCurrency(dueAmount);
-
-        invoiceCustomerNameEl.textContent = customerNameEl.value || 'Walk-in Customer';
-        const addr = (customerAddressEl.value || '').trim();
-        const phoneDisp = getDisplayPhone();
-        invoiceAddressEl.textContent = addr;
-        invoiceAddrBlock.classList.toggle('hidden', !addr);
-        invoiceContactEl.textContent = phoneDisp;
-        invoiceContactBlock.classList.toggle('hidden', !phoneDisp);
-      };
-
-      // --- HANDLERS ---
-      const handleAddItem = () => {
-        const selectedBookId = bookSelectEl.value;
-        const selectedBook = booksDB.find(book => book.id === selectedBookId);
-        const qty = parseInt(quantityEl.value, 10);
-        const rate = parseFloat(rateEl.value);
-
-        if (!selectedBook || selectedBook.id === 'default' || isNaN(qty) || qty <= 0) {
-          alert('Please select a book and enter a valid quantity.');
-          return;
-        }
-
-        billItems.push({
-          title: selectedBook.title,
-          author: selectedBook.author,
-          qty,
-          rate,
-          amount: qty * rate
+        invoiceItemsEl.innerHTML = billItems.length ? '' : `<tr id="empty-message"><td colspan="6" class="text-center p-8 sm:p-16 text-gray-400">Your bill is empty.</td></tr>`;
+        billItems.forEach((item, i) => {
+          const tr = document.createElement('tr');
+          tr.className = 'text-sm text-gray-700';
+          tr.innerHTML = `
+            <td class="p-2 sm:p-3">${i+1}</td>
+            <td class="p-2 sm:p-3">
+              <span class="font-semibold break-words">${item.title}</span>
+              <span class="block text-xs text-gray-500 break-words">${item.author}</span>
+            </td>
+            <td class="p-2 sm:p-3 text-center">${item.qty}</td>
+            <td class="p-2 sm:p-3 text-right">${formatCurrency(item.rate)}</td>
+            <td class="p-2 sm:p-3 text-right font-semibold">${formatCurrency(item.amount)}</td>
+            <td class="p-2 sm:p-3 text-center no-print">
+              <button class="delete-item-btn text-red-500 hover:text-red-700" data-index="${i}" aria-label="Delete item ${i+1}">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+              </button>
+            </td>`;
+          invoiceItemsEl.appendChild(tr);
         });
 
-        bookSelectEl.value = 'default';
-        quantityEl.value = '1';
-        rateEl.value = '0.00';
-
-        renderBill();
-      };
-
-      const handleSaveLog = () => {
-        if (billItems.length === 0) return;
-
-        const invoiceNo = invoiceNumberEl.textContent;
-        const date = invoiceDateEl.textContent;
-        const customer = customerNameEl.value || 'Walk-in Customer';
-
-        const total = billItems.reduce((acc, item) => acc + item.amount, 0);
-        const paid = parseFloat(amountPaidEl.value) || 0;
-        const due = total - paid;
-
-        billItems.forEach((item, index) => {
-          salesLogDatabase.push({
-            invoiceNo,
-            date,
-            customer,
-            itemNo: index + 1,
-            title: item.title,
-            author: item.author,
-            qty: item.qty,
-            rate: item.rate,
-            amount: item.amount,
-            total,
-            paidAmount: paid,
-            dueAmount: due
-          });
-        });
-        persistSalesLog();
-      };
-
-      const handleDownloadFullLog = () => {
-        if (salesLogDatabase.length === 0) {
-          alert('The sales log is empty. Save an invoice first by printing it.');
-          return;
-        }
-
-        const data = [
-          ["Invoice No", "Date", "Customer", "#", "Book Title", "Author", "Qty", "Rate (₹)", "Amount (₹)", "Invoice Total", "Paid Amount", "Due Amount"]
-        ];
-
-        salesLogDatabase.forEach(entry => {
-          data.push([
-            entry.invoiceNo,
-            entry.date,
-            entry.customer,
-            entry.itemNo,
-            entry.title,
-            entry.author,
-            entry.qty,
-            entry.rate.toFixed(2),
-            entry.amount.toFixed(2),
-            entry.total.toFixed(2),
-            entry.paidAmount.toFixed(2),
-            entry.dueAmount.toFixed(2)
-          ]);
-        });
-
-        const ws = XLSX.utils.aoa_to_sheet(data);
-        const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, "SalesLog");
-
-        const t = new Date();
-        const d = String(t.getDate()).padStart(2, '0');
-        const m = String(t.getMonth() + 1).padStart(2, '0');
-        const y = t.getFullYear();
-        const filename = `PrajnanaMission_SalesLog_${y}${m}${d}.xlsx`;
-
-        XLSX.writeFile(wb, filename);
-      };
-
-      // --- WhatsApp helpers ---
-      const buildWhatsAppMessage = () => {
-        const invoiceNo = invoiceNumberEl.textContent.trim();
-        const date = invoiceDateEl.textContent.trim();
-        const customer = (customerNameEl.value || 'Walk-in Customer').trim();
-        const address = (customerAddressEl.value || '').trim();
-        const contact = getDisplayPhone();
-
-        const itemsLines = billItems.map((item, i) => {
-          const authorPart = item.author ? ` (${item.author})` : '';
-          return `${i + 1}) ${item.title}${authorPart} - ${item.qty} x ₹${item.rate.toFixed(2)} = ₹${item.amount.toFixed(2)}`;
-        }).join('\n');
-
-        const total = billItems.reduce((acc, item) => acc + item.amount, 0);
-        const paid = parseFloat(amountPaidEl.value) || 0;
-        const due = total - paid;
-
-        return `Prajnana Mission Invoice
-Invoice No: ${invoiceNo}
-Date: ${date}
-Customer: ${customer}${address ? `\nAddress: ${address}` : ''}${contact ? `\nContact: ${contact}` : ''}
-
-Items:
-${itemsLines || '-'}
------------------------
-Total: ₹${total.toFixed(2)}
-Paid: ₹${paid.toFixed(2)}
-Due: ₹${due.toFixed(2)}
-
-Thank you for your support.`;
-      };
-
-      const getWhatsAppPhone = () => {
-        const code = (countryCodeEl.value || '').replace(/[^\d]/g, '');
-        const num = (whatsappNumberEl.value || '').replace(/[^\d]/g, '');
-        if (!num) return '';
-        const finalCode = code || '91';
-        return `${finalCode}${num}`;
-      };
-
-      const buildWhatsAppURL = (phone, msg) => {
-        const enc = encodeURIComponent(msg);
-        return phone ? `https://wa.me/${phone}?text=${enc}` : `https://wa.me/?text=${enc}`;
-      };
-
-      const openWhatsAppSafely = (url, waWinHandle) => {
-        try {
-          if (waWinHandle && !waWinHandle.closed) {
-            waWinHandle.location = url;
-          } else {
-            window.open(url, '_blank');
-          }
-        } catch (e) {
-          window.open(url, '_blank');
-        }
-      };
-
-      // Initialize invoice info
-      const initialize = () => {
-        loadInvoiceCounter();
-        invoiceDateEl.textContent = getFormattedDate();
-        invoiceNumberEl.textContent = getInvoiceNumber();
-      };
-
-      // Listeners
-      addItemBtn.addEventListener('click', handleAddItem);
-      downloadLogBtn.addEventListener('click', handleDownloadFullLog);
-      bookSelectEl.addEventListener('change', handleBookSelection);
-      customerNameEl.addEventListener('input', renderBill);
-      customerAddressEl.addEventListener('input', renderBill);
-      countryCodeEl.addEventListener('input', renderBill);
-      whatsappNumberEl.addEventListener('input', renderBill);
-      amountPaidEl.addEventListener('input', renderBill);
-
-      invoiceItemsEl.addEventListener('click', (e) => {
-        const btn = e.target.closest('.delete-item-btn');
-        if (btn) {
-          const i = parseInt(btn.dataset.index, 10);
-          billItems.splice(i, 1);
-          renderBill();
-        }
-      });
-
-      // Print/Save/Send
-      printBtn.addEventListener('click', () => {
-        if (billItems.length === 0) {
-          alert('Your bill is empty. Please add items before printing/sending.');
-          return;
-        }
-        handleSaveLog();
-
-        const phone = getWhatsAppPhone();
-        const msg = buildWhatsAppMessage();
-        const waUrl = buildWhatsAppURL(phone, msg);
-
-        const waWin = window.open('about:blank', '_blank');
-        let sent = false;
-        const doSend = () => {
-          if (sent) return;
-          sent = true;
-          window.removeEventListener('afterprint', doSend);
-          openWhatsAppSafely(waUrl, waWin);
-        };
-        window.addEventListener('afterprint', doSend);
-        window.print();
-        setTimeout(doSend, 1500);
-      });
-
-      // Boot
-      loadSalesLog();
-      populateBookDropdown();
-      initialize();
-      renderBill();
-    });
-
-    // ===== PWA: Robust SW registration + Install handling =====
-    (function () {
-      const installBtn = document.getElementById('installAppBtn');
-      const hint = document.getElementById('installHint');
-      let deferredPrompt = null;
-      let bipFired = false;
-
-      const setHint = (msg) => { if (hint) hint.textContent = msg; };
-
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', async () => {
-          try {
-            const reg = await navigator.serviceWorker.register('./sw.js?v=10', { scope: './' });
-            console.log('[SW] registered:', reg.scope);
-
-            if (!navigator.serviceWorker.controller) {
-              setHint('Installed SW. Reload once to enable Install.');
-            }
-            navigator.serviceWorker.addEventListener('controllerchange', () => {
-              console.log('[SW] controllerchange');
-              setHint('Ready. If Install doesn’t appear, wait a moment or reload once more.');
-            });
-          } catch (err) {
-            console.error('[SW] registration failed:', err);
-            setHint('SW registration failed (see console).');
-          }
-        });
-      }
-
-      const isIos = /iphone|ipad|ipod/i.test(navigator.userAgent);
-      const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
-
-      if (installBtn) {
-        installBtn.disabled = true;
-        if (isStandalone) {
-          installBtn.textContent = 'Installed';
-          installBtn.disabled = true;
-          setHint('App is already installed.');
-        } else if (isIos) {
-          installBtn.disabled = false;
-          installBtn.textContent = 'How to Install (iOS)';
-          setHint('On iPhone/iPad: Share → Add to Home Screen.');
-          installBtn.addEventListener('click', () => {
-            alert('On iPhone/iPad: open in Safari → Share → Add to Home Screen.');
-          }, { once: true });
-        }
-      }
-
-      window.addEventListener('beforeinstallprompt', (e) => {
-        e.preventDefault();
-        deferredPrompt = e;
-        bipFired = true;
-        if (installBtn) {
-          installBtn.disabled = false;
-          installBtn.textContent = 'Install App';
-          setHint('Tap Install App to add to home screen.');
-        }
-        console.log('[PWA] beforeinstallprompt fired');
-      });
-
-      installBtn?.addEventListener('click', async () => {
-        if (deferredPrompt) {
-          deferredPrompt.prompt();
-          const choice = await deferredPrompt.userChoice;
-          console.log('[PWA] userChoice:', choice.outcome);
-          deferredPrompt = null;
-          if (choice.outcome !== 'accepted') {
-            setHint('Install dismissed. You can try again from the browser menu.');
-          }
-        } else if (!navigator.serviceWorker.controller) {
-          alert('Almost there! Reload the page once so the app can be installed.');
-        } else if (!isIos) {
-          alert('If no prompt appears, use your browser menu: “Install app”.');
-        }
-      });
-
-      window.addEventListener('appinstalled', () => {
-        console.log('[PWA] appinstalled');
-        if (installBtn) {
-          installBtn.textContent = 'Installed';
-          installBtn.disabled = true;
-        }
-        setHint('App installed successfully.');
-      });
-
-      // If no prompt after a few seconds, give a helpful hint
-      setTimeout(() => {
-        if (!bipFired && !isIos && !isStandalone) {
-          if (!navigator.serviceWorker.controller) {
-            setHint('Service Worker is not controlling the page yet. Reload once.');
-          } else {
-            setHint('Install prompt not available yet. Use browser menu “Install app”.');
-          }
-        }
-      }, 4000);
-    })();
-  </script>
-</body>
-</html>
+        const total = 
