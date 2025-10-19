@@ -8,7 +8,8 @@
 
   <!-- PWA -->
   <meta name="theme-color" content="#4f46e5" />
-  <link rel="manifest" href="manifest.webmanifest" />
+  <!-- Add a cache-busting query so GH Pages won’t serve an old manifest -->
+  <link rel="manifest" href="manifest.webmanifest?v=8" type="application/manifest+json" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <link rel="apple-touch-icon" href="https://brsujit.github.io/messages/logo/kriya_logo_192.png" />
@@ -658,14 +659,14 @@ Thank you for your support.`;
 
       const setHint = (msg) => { if (hint) hint.textContent = msg; };
 
-      // Check that files are reachable (helps debug paths quickly)
+      // Quick check that files are reachable
       async function checkFiles() {
         try {
-          const m = await fetch('manifest.webmanifest', { cache: 'no-store' });
+          const m = await fetch('manifest.webmanifest?v=8', { cache: 'no-store' });
           if (!m.ok) setHint('manifest.webmanifest not found at /gitaexam/.');
         } catch { setHint('manifest.webmanifest not reachable.'); }
         try {
-          const s = await fetch('sw.js', { cache: 'no-store' });
+          const s = await fetch('sw.js?v=8', { cache: 'no-store' });
           if (!s.ok) setHint('sw.js not found at /gitaexam/.');
         } catch { setHint('sw.js not reachable.'); }
       }
@@ -674,13 +675,13 @@ Thank you for your support.`;
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', async () => {
           try {
-            const reg = await navigator.serviceWorker.register('./sw.js');
+            // Cache-bust and explicit scope to force fresh control on GH Pages
+            const reg = await navigator.serviceWorker.register('./sw.js?v=8', { scope: './' });
             console.log('[SW] registered:', reg.scope);
 
             if (!navigator.serviceWorker.controller) {
               setHint('Installed SW. Reload once to enable Install.');
             }
-            // When SW gains control, update hint
             navigator.serviceWorker.addEventListener('controllerchange', () => {
               console.log('[SW] controllerchange');
               setHint('Ready. If Install doesn’t appear, wait a moment or reload once more.');
@@ -748,7 +749,7 @@ Thank you for your support.`;
         setHint('App installed successfully.');
       });
 
-      // After 4s, if no prompt fired on Android/Chrome, explain the likely reason
+      // If no prompt after a few seconds, give a helpful hint
       setTimeout(() => {
         if (!bipFired && !isIos && !isStandalone) {
           if (!navigator.serviceWorker.controller) {
