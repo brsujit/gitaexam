@@ -1,343 +1,385 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Prajnana Mission Bill Book</title>
+  <title>Gita Exam</title>
 
   <!-- PWA -->
-  <meta name="theme-color" content="#4f46e5" />
   <link rel="manifest" href="manifest.webmanifest" />
+  <meta name="theme-color" content="#0b5ed7" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-  <link rel="apple-touch-icon" href="https://brsujit.github.io/messages/logo/kriya_logo_192.png" />
-
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-
-  <!-- Excel Library -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
   <style>
-    body { font-family: 'Inter', sans-serif; }
-    img.responsive-img { max-width: 100%; height: auto; }
-    @media print {
-      body { padding: 0; margin: 0; }
-      body * { visibility: hidden; }
-      #invoice-print-area, #invoice-print-area * { visibility: visible; }
-      #invoice-print-area { box-shadow: none; }
-      .no-print { display: none; }
+    :root {
+      --primary: #0b5ed7;
+      --bg: #f7f9fc;
+      --text: #1f2937;
+      --card: #ffffff;
+      --muted: #6b7280;
+      --success: #16a34a;
+      --danger: #dc2626;
     }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+    }
+    header {
+      padding: 16px;
+      background: var(--card);
+      border-bottom: 1px solid #e5e7eb;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      position: sticky;
+      top: 0;
+      z-index: 5;
+    }
+    header h1 {
+      font-size: 18px;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+    }
+    header h1 .badge {
+      font-size: 11px;
+      background: #e9f2ff;
+      color: var(--primary);
+      padding: 2px 6px;
+      border-radius: 999px;
+      border: 1px solid #d6e6ff;
+      font-weight: 600;
+    }
+
+    main {
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+    .card {
+      width: 100%;
+      max-width: 420px;
+      background: var(--card);
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      padding: 20px;
+      box-shadow: 0 1px 2px rgba(16, 24, 40, .04);
+    }
+    .card h2 {
+      margin: 0 0 6px 0;
+      font-size: 20px;
+    }
+    .sub {
+      margin: 0 0 18px 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .field { margin-bottom: 12px; }
+    .label {
+      display: block;
+      font-size: 13px;
+      margin-bottom: 6px;
+      color: #374151;
+      font-weight: 600;
+    }
+    input[type="text"], input[type="password"] {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      font-size: 14px;
+      outline: none;
+      transition: border-color .2s, box-shadow .2s;
+      background: #fff;
+    }
+    input:focus {
+      border-color: #c9ddff;
+      box-shadow: 0 0 0 4px rgba(11, 94, 215, .08);
+    }
+    .row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin: 4px 0 10px;
+    }
+    .row small {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 14px;
+      border: none;
+      border-radius: 10px;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 14px;
+      transition: transform .02s ease, filter .2s;
+    }
+    button:active { transform: translateY(1px); }
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+      width: 100%;
+    }
+    .btn-secondary {
+      background: #eef2ff;
+      color: #1e3a8a;
+      border: 1px solid #dde7ff;
+    }
+    .muted {
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 10px;
+      text-align: center;
+    }
+
+    .status {
+      margin-top: 10px;
+      font-size: 13px;
+    }
+    .status.ok { color: var(--success); }
+    .status.err { color: var(--danger); }
+
+    footer {
+      padding: 12px 16px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    /* iOS install sheet */
+    .sheet {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.45);
+      display: none;
+      align-items: flex-end;
+      z-index: 9999;
+    }
+    .sheet.open { display: flex; }
+    .sheet .panel {
+      background: #fff;
+      width: 100%;
+      padding: 18px;
+      border-top-left-radius: 16px;
+      border-top-right-radius: 16px;
+      box-shadow: 0 -8px 30px rgba(0,0,0,.15);
+    }
+    .sheet h3 { margin: 0 0 6px 0; font-size: 16px; }
+    .sheet p { margin: 0 0 10px 0; color: #374151; font-size: 14px; }
   </style>
 </head>
-<body class="bg-gray-100">
+<body>
+  <header>
+    <h1>
+      🕉️ Gita Exam
+      <span class="badge">PWA</span>
+    </h1>
+    <button id="installBtn" type="button" class="btn-secondary" hidden>
+      📲 Install in your mobile
+    </button>
+  </header>
 
-  <!-- Password Protection Modal -->
-  <div id="password-modal" class="fixed inset-0 bg-gray-900 bg-opacity-80 flex items-center justify-center z-50">
-    <div class="bg-white p-6 sm:p-8 rounded-xl shadow-2xl w-full max-w-sm">
-      <h2 class="text-xl sm:text-2xl font-bold text-center text-gray-800 mb-4 sm:mb-6">Enter Password</h2>
-      <div class="space-y-4">
-        <input type="password" id="password-input" class="mt-1 block w-full px-4 py-3 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Password">
-        <button id="login-btn" class="w-full bg-indigo-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-300">Login</button>
-        <p id="error-message" class="text-red-500 text-sm text-center mt-2 hidden">Incorrect password. Please try again.</p>
+  <main>
+    <section class="card" aria-labelledby="login-title">
+      <h2 id="login-title">Login</h2>
+      <p class="sub">Sign in to continue to your exam dashboard.</p>
+
+      <form id="loginForm" novalidate>
+        <div class="field">
+          <label class="label" for="username">Username</label>
+          <input id="username" name="username" type="text" autocomplete="username" required placeholder="Enter your username" />
+        </div>
+
+        <div class="field">
+          <label class="label" for="password">Password</label>
+          <input id="password" name="password" type="password" autocomplete="current-password" required placeholder="Enter your password" />
+        </div>
+
+        <div class="row">
+          <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:#374151;cursor:pointer;">
+            <input id="showPw" type="checkbox" />
+            Show password
+          </label>
+          <small id="authHint">Demo mode accepts any non-empty credentials</small>
+        </div>
+
+        <button id="loginBtn" class="btn-primary" type="submit">Login</button>
+        <div id="status" class="status" role="status" aria-live="polite"></div>
+      </form>
+
+      <p class="muted">
+        Tip: You can install this app on your device for a full-screen, offline-capable experience.
+      </p>
+    </section>
+  </main>
+
+  <footer>
+    © <span id="year"></span> Gita Exam
+  </footer>
+
+  <!-- iOS install instructions sheet -->
+  <div id="iosSheet" class="sheet" role="dialog" aria-modal="true" aria-labelledby="iosTitle" aria-describedby="iosDesc">
+    <div class="panel">
+      <h3 id="iosTitle">Install on iPhone/iPad</h3>
+      <p id="iosDesc">
+        1) Tap the Share icon in Safari. 2) Choose “Add to Home Screen”.
+      </p>
+      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:10px;">
+        <button type="button" class="btn-secondary" id="closeIos">Close</button>
       </div>
     </div>
   </div>
 
-  <!-- Main Content (hidden by default) -->
-  <div id="main-content" class="hidden p-3 sm:p-4 lg:p-8">
-    <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
-
-      <!-- Left Column: Input Form -->
-      <div class="lg:col-span-4 bg-white p-4 sm:p-6 rounded-xl shadow-lg h-fit no-print">
-        <!-- Add Book Details -->
-        <div class="mb-6">
-          <h2 class="text-lg sm:text-xl font-bold text-gray-800 mb-4 border-b pb-2">Add Book Details</h2>
-          <div class="space-y-4">
-            <div>
-              <label for="bookSelect" class="block text-sm font-medium text-gray-700">Select a book</label>
-              <select id="bookSelect" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"></select>
-            </div>
-            <div class="grid grid-cols-2 gap-4">
-              <div>
-                <label for="quantity" class="block text-sm font-medium text-gray-700">Qty</label>
-                <input type="number" id="quantity" value="1" min="1" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-              </div>
-              <div>
-                <label for="rate" class="block text-sm font-medium text-gray-700">Unit Rate (₹)</label>
-                <input type="number" id="rate" value="0" min="0" step="0.01" readonly class="mt-1 block w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-md shadow-sm focus:outline-none sm:text-sm">
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Bill Options -->
-        <div class="mb-6">
-          <h2 class="text-lg sm:text-xl font-bold text-gray-800 mb-4 border-b pb-2">Bill Options</h2>
-          <div class="space-y-4">
-            <div>
-              <label for="customerName" class="block text-sm font-medium text-gray-700">Customer Name</label>
-              <input type="text" id="customerName" placeholder="Walk-in Customer" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-            </div>
-
-            <div>
-              <label for="customerAddress" class="block text-sm font-medium text-gray-700">Address</label>
-              <textarea id="customerAddress" rows="2" placeholder="Street, City, State, PIN" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"></textarea>
-            </div>
-
-            <div class="grid grid-cols-2 gap-4">
-              <div>
-                <label for="countryCode" class="block text-sm font-medium text-gray-700">Country Code</label>
-                <input type="text" id="countryCode" value="91" inputmode="numeric" pattern="[0-9]*" maxlength="4" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="e.g., 91">
-              </div>
-              <div>
-                <label for="whatsappNumber" class="block text sm font-medium text-gray-700">WhatsApp No</label>
-                <input type="text" id="whatsappNumber" inputmode="numeric" pattern="[0-9]*" maxlength="15" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="e.g., 8598899371">
-              </div>
-            </div>
-
-            <div>
-              <label for="amountPaid" class="block text-sm font-medium text-gray-700">Paid Amount (₹)</label>
-              <input type="number" id="amountPaid" value="0" min="0" step="0.01" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-            </div>
-          </div>
-        </div>
-
-        <!-- Actions -->
-        <div>
-          <h2 class="text-lg sm:text-xl font-bold text-gray-800 mb-4 border-b pb-2">Actions</h2>
-          <div class="space-y-3">
-            <button id="addItemBtn" class="w-full bg-orange-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 transition-colors duration-300">Add Item to Bill</button>
-            <button id="printBtn" class="w-full bg-green-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors duration-300">Print/Save/Send</button>
-            <button id="downloadLogBtn" class="w-full bg-teal-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 transition-colors duration-300">Download Full Log (Excel)</button>
-          </div>
-        </div>
-
-        <!-- Install App Button -->
-        <div class="mt-6 text-center no-print">
-          <button id="installAppBtn" class="bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-colors duration-300 disabled:bg-gray-400 disabled:cursor-not-allowed">
-            Install in your mobile phone
-          </button>
-          <p id="installHint" class="text-xs text-center text-gray-500 mt-2 no-print">
-            Button enables when the browser is ready to install.
-          </p>
-        </div>
-      </div>
-
-      <!-- Right Column: Invoice Preview -->
-      <div class="lg:col-span-8">
-        <div id="invoice-print-area" class="bg-white p-4 sm:p-6 lg:p-8 rounded-xl shadow-lg">
-          <div class="flex items-center mb-6 lg:mb-8 border-b pb-4 lg:pb-6 space-x-4">
-            <img src="https://brsujit.github.io/messages/logo/kriya_logo.jpeg" alt="Prajnana Mission Logo" class="h-16 sm:h-20 lg:h-24 w-auto">
-            <div class="min-w-0">
-              <h1 class="text-2xl sm:text-3xl font-extrabold text-gray-800 tracking-wider break-words">PRAJNAJNA MISSION</h1>
-              <p class="text-xs sm:text-sm text-gray-500 mt-1">Jagatpur, Cuttack - 754021 | Contact Number - +918598899371</p>
-            </div>
-          </div>
-
-          <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-6 lg:mb-8 text-sm">
-            <div class="max-w-full sm:max-w-[65%]">
-              <p class="font-bold text-gray-700">Customer:</p>
-              <p id="invoiceCustomerName" class="text-gray-600 break-words">Walk-in Customer</p>
-
-              <div id="invoiceAddrBlock" class="mt-2 hidden">
-                <p class="font-bold text-gray-700">Address:</p>
-                <p id="invoiceAddress" class="text-gray-600 whitespace-pre-wrap break-words"></p>
-              </div>
-
-              <div id="invoiceContactBlock" class="mt-2 hidden">
-                <p class="font-bold text-gray-700">Contact:</p>
-                <p id="invoiceContact" class="text-gray-600 break-words"></p>
-              </div>
-            </div>
-
-            <div class="text-left sm:text-right">
-              <p class="font-bold text-gray-700">Invoice No:</p>
-              <p id="invoiceNumber" class="text-gray-600">INV-YYYYMMDD-001</p>
-              <p class="font-bold text-gray-700 mt-2">Date:</p>
-              <p id="invoiceDate" class="text-gray-600">DD/MM/YYYY</p>
-            </div>
-          </div>
-
-          <div class="w-full overflow-x-auto">
-            <table class="min-w-[680px] w-full text-left">
-              <thead>
-                <tr class="bg-gray-100 text-xs sm:text-sm font-semibold text-gray-600">
-                  <th class="p-2 sm:p-3">#</th>
-                  <th class="p-2 sm:p-3 w-2/5">TITLE (AUTHOR)</th>
-                  <th class="p-2 sm:p-3 text-center">QTY</th>
-                  <th class="p-2 sm:p-3 text-right">RATE (₹)</th>
-                  <th class="p-2 sm:p-3 text-right">AMOUNT (₹)</th>
-                  <th class="p-2 sm:p-3 text-center no-print">DEL</th>
-                </tr>
-              </thead>
-              <tbody id="invoiceItems" class="divide-y">
-                <tr id="empty-message"><td colspan="6" class="text-center p-8 sm:p-16 text-gray-400">Your bill is empty.</td></tr>
-              </tbody>
-            </table>
-          </div>
-
-          <div class="flex justify-end mt-6 lg:mt-8">
-            <div class="w-full sm:w-2/3 lg:w-2/5 space-y-3 text-sm">
-              <div class="flex justify-between border-b pb-2 text-base">
-                <span class="font-bold text-gray-800">Total:</span>
-                <span id="total" class="font-bold text-gray-900">₹ 0.00</span>
-              </div>
-              <div class="flex justify-between border-b pb-2 text-base">
-                <span class="font-medium text-green-600">Paid Amount:</span>
-                <span id="paidAmountDisplay" class="font-medium text-green-700">₹ 0.00</span>
-              </div>
-              <div class="flex justify-between bg-yellow-100 p-3 rounded-lg text-lg">
-                <span class="font-bold text-red-600">Due Amount:</span>
-                <span id="dueAmount" class="font-bold text-red-700">₹ 0.00</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="mt-6 lg:mt-8">
-            <img src="QRcode.jpg" alt="QR Code" class="responsive-img w-[200px] h-auto">
-          </div>
-
-          <div class="text-center text-xs print:text-[10px] text-gray-500 mt-6 lg:mt-8 pt-4 lg:pt-6 border-t">
-            Thank you for your invaluable support and dedication. We are deeply grateful for your efforts. May the choicest blessings of God, Gurus and Bhagavat Gita be upon you always.
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- All App Scripts -->
   <script>
-    // ===== Password Gate =====
-    (function () {
-      const CORRECT_PASSWORD = 'prajnana';
-      function setupPasswordGate() {
-        const passwordModal = document.getElementById('password-modal');
-        const passwordInput = document.getElementById('password-input');
-        const loginBtn = document.getElementById('login-btn');
-        const mainContent = document.getElementById('main-content');
-        const err = document.getElementById('error-message');
-        const unlock = () => {
-          const v = (passwordInput.value || '').trim();
-          if (v.toLowerCase() === CORRECT_PASSWORD.toLowerCase()) {
-            passwordModal.classList.add('hidden');
-            mainContent.classList.remove('hidden');
-            err?.classList.add('hidden');
-          } else {
-            err?.classList.remove('hidden');
-            passwordInput.value = ''; passwordInput.focus();
-          }
-        };
-        loginBtn.addEventListener('click', unlock);
-        passwordInput.addEventListener('keyup', e => { if (e.key === 'Enter') unlock(); });
-        passwordInput.addEventListener('input', () => err?.classList.add('hidden'));
-        passwordModal.classList.remove('hidden'); mainContent.classList.add('hidden');
-        setTimeout(() => passwordInput.focus(), 0);
+    // ===== Utility =====
+    const $ = (sel) => document.querySelector(sel);
+    const byId = (id) => document.getElementById(id);
+    const statusEl = byId('status');
+
+    // ===== Footer year =====
+    byId('year').textContent = new Date().getFullYear();
+
+    // ===== Login demo (client-side only) =====
+    // Replace this with your real auth later if needed.
+    byId('showPw').addEventListener('change', (e) => {
+      byId('password').type = e.target.checked ? 'text' : 'password';
+    });
+
+    byId('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      statusEl.textContent = '';
+      statusEl.className = 'status';
+
+      const username = byId('username').value.trim();
+      const password = byId('password').value;
+
+      if (!username || !password) {
+        statusEl.textContent = 'Please enter a username and password.';
+        statusEl.classList.add('err');
+        return;
       }
-      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', setupPasswordGate); else setupPasswordGate();
+
+      // Simulate async login
+      byId('loginBtn').disabled = true;
+      byId('loginBtn').textContent = 'Signing in…';
+      await new Promise(r => setTimeout(r, 500)); // fake delay
+
+      // Success: save session and update UI
+      localStorage.setItem('gitaexam_user', JSON.stringify({ username, ts: Date.now() }));
+      statusEl.textContent = 'Login successful! Redirecting…';
+      statusEl.classList.add('ok');
+
+      // TODO: redirect to your dashboard page if you have one.
+      // location.href = './dashboard.html';
+      byId('loginBtn').disabled = false;
+      byId('loginBtn').textContent = 'Login';
+    });
+
+    // ===== PWA Install handling =====
+    const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+    const installBtn = byId('installBtn');
+    const iosSheet = byId('iosSheet');
+    const closeIos = byId('closeIos');
+
+    let deferredPrompt = null;
+
+    // Show install button only when appropriate
+    function updateInstallVisibility() {
+      // If already installed, hide button
+      if (isStandalone) {
+        installBtn.hidden = true;
+        return;
+      }
+      // iOS: we can show the button to open instructions at any time
+      if (isIOS) {
+        installBtn.hidden = false;
+        return;
+      }
+      // Other platforms: only show after beforeinstallprompt fires
+      if (deferredPrompt) {
+        installBtn.hidden = false;
+      }
+    }
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      // Required: prevent mini-infobar and store the event for later
+      e.preventDefault();
+      deferredPrompt = e;
+      updateInstallVisibility();
+      console.log('[PWA] beforeinstallprompt fired');
+    });
+
+    window.addEventListener('appinstalled', () => {
+      console.log('[PWA] App installed');
+      installBtn.hidden = true;
+      deferredPrompt = null;
+      localStorage.setItem('gitaexam_installed', '1');
+    });
+
+    installBtn.addEventListener('click', async () => {
+      if (isIOS) {
+        iosSheet.classList.add('open');
+        return;
+      }
+      if (!deferredPrompt) {
+        // Not yet eligible or already installed
+        statusEl.textContent = 'Install not available yet. Keep using the app for a bit, or try again.';
+        statusEl.className = 'status';
+        return;
+      }
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      console.log('[PWA] userChoice:', outcome);
+      deferredPrompt = null;
+      updateInstallVisibility();
+      if (outcome === 'accepted') {
+        statusEl.textContent = 'Thanks! Installing…';
+        statusEl.className = 'status ok';
+      } else {
+        statusEl.textContent = 'Install cancelled.';
+        statusEl.className = 'status';
+      }
+    });
+
+    closeIos.addEventListener('click', () => iosSheet.classList.remove('open'));
+    iosSheet.addEventListener('click', (e) => {
+      if (e.target === iosSheet) iosSheet.classList.remove('open');
+    });
+
+    // ===== Service Worker registration (GitHub Pages /gitaexam/ scope) =====
+    (async function registerSW() {
+      if (!('serviceWorker' in navigator)) return;
+      try {
+        // Important: Use relative path and scope "./" so the SW controls /gitaexam/ on GitHub Pages.
+        const reg = await navigator.serviceWorker.register('./sw.js', { scope: './' });
+        console.log('[SW] registered with scope:', reg.scope);
+      } catch (err) {
+        console.error('[SW] registration failed:', err);
+      }
     })();
 
-    // ===== Main App =====
-    document.addEventListener('DOMContentLoaded', function () {
-      const booksDB = [
-        { id: 'default', title: 'Select a Book...', author: '', rate: 0 },
-        { id: '1', title: 'Shrimad Bhagavat Gita, Chapter-5', author: 'Paramahamsa Prajnanananda', rate: 50.00 }
-      ];
-
-      let billItems = [];
-      let salesLogDatabase = [];
-      let invoiceCounter = 1;
-
-      const LOG_KEY = 'pm_billbook_sales_log_v1';
-      const INV_COUNTER_KEY = 'pm_billbook_invoice_counter_v1';
-      const INV_DATE_KEY = 'pm_billbook_invoice_date_v1';
-
-      const bookSelectEl = document.getElementById('bookSelect');
-      const quantityEl = document.getElementById('quantity');
-      const rateEl = document.getElementById('rate');
-      const addItemBtn = document.getElementById('addItemBtn');
-      const customerNameEl = document.getElementById('customerName');
-      const customerAddressEl = document.getElementById('customerAddress');
-      const countryCodeEl = document.getElementById('countryCode');
-      const whatsappNumberEl = document.getElementById('whatsappNumber');
-      const amountPaidEl = document.getElementById('amountPaid');
-      const printBtn = document.getElementById('printBtn');
-      const downloadLogBtn = document.getElementById('downloadLogBtn');
-      const invoiceCustomerNameEl = document.getElementById('invoiceCustomerName');
-      const invoiceNumberEl = document.getElementById('invoiceNumber');
-      const invoiceDateEl = document.getElementById('invoiceDate');
-      const invoiceItemsEl = document.getElementById('invoiceItems');
-      const totalEl = document.getElementById('total');
-      const paidAmountDisplayEl = document.getElementById('paidAmountDisplay');
-      const dueAmountEl = document.getElementById('dueAmount');
-      const invoiceAddrBlock = document.getElementById('invoiceAddrBlock');
-      const invoiceAddressEl = document.getElementById('invoiceAddress');
-      const invoiceContactBlock = document.getElementById('invoiceContactBlock');
-      const invoiceContactEl = document.getElementById('invoiceContact');
-
-      const formatCurrency = (amt) => `₹ ${amt.toFixed(2)}`;
-      const getFormattedDate = () => {
-        const t = new Date(); const d = String(t.getDate()).padStart(2, '0'); const m = String(t.getMonth()+1).padStart(2, '0'); const y = t.getFullYear();
-        return `${d}/${m}/${y}`;
-      };
-      const getTodayId = () => {
-        const t = new Date(); return `${t.getFullYear()}${String(t.getMonth()+1).padStart(2,'0')}${String(t.getDate()).padStart(2,'0')}`;
-      };
-      const loadInvoiceCounter = () => {
-        const todayId = getTodayId();
-        const storedDate = localStorage.getItem(INV_DATE_KEY);
-        if (storedDate === todayId) {
-          const c = parseInt(localStorage.getItem(INV_COUNTER_KEY) || '1', 10);
-          invoiceCounter = isNaN(c) ? 1 : c;
-        } else {
-          invoiceCounter = 1;
-          localStorage.setItem(INV_DATE_KEY, todayId);
-          localStorage.setItem(INV_COUNTER_KEY, String(invoiceCounter));
-        }
-      };
-      const getInvoiceNumber = () => {
-        const t = new Date(); const d = String(t.getDate()).padStart(2, '0'); const m = String(t.getMonth()+1).padStart(2, '0'); const y = t.getFullYear();
-        const c = String(invoiceCounter).padStart(3, '0');
-        return `INV-${y}${m}${d}-${c}`;
-      };
-      const getDisplayPhone = () => {
-        const code = (countryCodeEl.value || '').replace(/[^\d]/g, '');
-        const num = (whatsappNumberEl.value || '').replace(/[^\d]/g, '');
-        if (!num) return '';
-        return `+${code || '91'} ${num}`;
-      };
-
-      const persistSalesLog = () => { try { localStorage.setItem(LOG_KEY, JSON.stringify(salesLogDatabase)); } catch {} };
-      const loadSalesLog = () => { try { salesLogDatabase = JSON.parse(localStorage.getItem(LOG_KEY) || '[]'); } catch { salesLogDatabase = []; } };
-
-      const populateBookDropdown = () => { booksDB.forEach(b => { const o = document.createElement('option'); o.value = b.id; o.textContent = b.title; bookSelectEl.appendChild(o); }); };
-      const handleBookSelection = () => { const b = booksDB.find(x => x.id === bookSelectEl.value); rateEl.value = b ? b.rate.toFixed(2) : '0.00'; };
-
-      const renderBill = () => {
-        invoiceItemsEl.innerHTML = billItems.length ? '' : `<tr id="empty-message"><td colspan="6" class="text-center p-8 sm:p-16 text-gray-400">Your bill is empty.</td></tr>`;
-        billItems.forEach((item, i) => {
-          const tr = document.createElement('tr');
-          tr.className = 'text-sm text-gray-700';
-          tr.innerHTML = `
-            <td class="p-2 sm:p-3">${i+1}</td>
-            <td class="p-2 sm:p-3">
-              <span class="font-semibold break-words">${item.title}</span>
-              <span class="block text-xs text-gray-500 break-words">${item.author}</span>
-            </td>
-            <td class="p-2 sm:p-3 text-center">${item.qty}</td>
-            <td class="p-2 sm:p-3 text-right">${formatCurrency(item.rate)}</td>
-            <td class="p-2 sm:p-3 text-right font-semibold">${formatCurrency(item.amount)}</td>
-            <td class="p-2 sm:p-3 text-center no-print">
-              <button class="delete-item-btn text-red-500 hover:text-red-700" data-index="${i}" aria-label="Delete item ${i+1}">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                </svg>
-              </button>
-            </td>`;
-          invoiceItemsEl.appendChild(tr);
-        });
-
-        const total = 
+    // Initial install button visibility
+    updateInstallVisibility();
+  </script>
+</body>
+</html>
