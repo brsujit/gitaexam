@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,12 +7,8 @@
     <title>Book Sell Bill Book</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="manifest" href='data:application/manifest+json,{"name":"Prajnana Mission Bill Book","short_name":"Bill Book","start_url":".","display":"standalone","background_color":"#ffffff","theme_color":"#4f46e5","description":"A simple book billing application.","icons":[{"src":"https://brsujit.github.io/messages/logo/kriya_logo_192.png","sizes":"192x192","type":"image/png"},{"src":"https://brsujit.github.io/messages/logo/kriya_logo_512.png","sizes":"512x512","type":"image/png"}]}' />
-    
+    <link rel="manifest" href='data:application/manifest+json,{"name":"Prajnana Mission Bill Book","short_name":"Bill Book","start_url":".","display":"standalone","background_color":"#ffffff","theme_color":"#4f46e5","description":"A simple book billing application.","icons":[{"src":"https://gccgkt.github.io/messages/logo/kriya_logo_192.png","sizes":"192x192","type":"image/png"},{"src":"https://brsujit.github.io/messages/logo/kriya_logo_512.png","sizes":"512x512","type":"image/png"}]}' />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" integrity="sha512-BNaRQnYJYiPSqHHDb58B0yaPfCu+Wgds8Gp/gU33kqBtgNS4tSPHuGibyoeqMV/TJlSKda6FXzoEyYGjTe+vXA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" integrity="sha512-qZvrmS2ekKPF2mSZnIDLtnjEqrwPdhBBYzI2GIIacqqECNnzoSsssxjbEScm5LmrN9SjKLlPlEppJSMlPmqhJw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     
     <style>
         body { font-family: 'Inter', sans-serif; }
@@ -85,6 +82,7 @@
           color: var(--muted);
           font-size: 12px;
         }
+        /* Shared button class */
         button {
           display: inline-flex;
           align-items: center;
@@ -99,11 +97,13 @@
           transition: transform .02s ease, filter .2s;
         }
         button:active { transform: translateY(1px); }
+        
         .btn-primary {
           background: var(--primary);
           color: #fff;
           width: 100%;
         }
+        /* Added for the install button */
         .btn-secondary {
           background: #eef2ff;
           color: #1e3a8a;
@@ -115,12 +115,16 @@
         }
         .status.ok { color: var(--success); }
         .status.err { color: var(--danger); }
+        
+        /* Added for the install tip */
         .muted {
           color: var(--muted);
           font-size: 13px;
           margin-top: 10px;
           text-align: center;
         }
+
+        /* Added for iOS install sheet */
         .sheet {
           position: fixed;
           inset: 0;
@@ -140,19 +144,6 @@
         }
         .sheet h3 { margin: 0 0 6px 0; font-size: 16px; }
         .sheet p { margin: 0 0 10px 0; color: #374151; font-size: 14px; }
-        
-        /* Loading spinner for PDF button */
-        .spinner {
-            width: 1.2em;
-            height: 1.2em;
-            border: 2px solid currentColor;
-            border-right-color: transparent;
-            border-radius: 50%;
-            animation: spinner-anim .75s linear infinite;
-        }
-        @keyframes spinner-anim {
-            to { transform: rotate(360deg); }
-        }
     </style>
 </head>
 <body class="bg-gray-100">
@@ -182,6 +173,7 @@
             <button id="loginInstallBtn" type="button" class="btn-secondary w-full mt-4" hidden>
                 📲 Install in your mobile
             </button>
+
             <p class="muted">
                 Tip: You can install this app on your device for a full-screen, offline-capable experience.
             </p>
@@ -190,7 +182,6 @@
     
     <div id="main-content" class="hidden p-4 lg:p-8">
         <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8">
-
             <div class="lg:col-span-4 bg-white p-6 rounded-xl shadow-lg h-fit no-print">
                 <div class="mb-6">
                     <h2 class="text-xl font-bold text-gray-800 mb-4 border-b pb-2">Add Book Details</h2>
@@ -220,6 +211,7 @@
                             <label for="customerName" class="block text-sm font-medium text-gray-700">Customer Name</label>
                             <input type="text" id="customerName" placeholder="Walk-in Customer" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                         </div>
+
                         <div>
                             <label for="customerAddress" class="block text-sm font-medium text-gray-700">Address</label>
                             <textarea id="customerAddress" rows="2" placeholder="Street, City, State, PIN" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"></textarea>
@@ -234,6 +226,7 @@
                                 <input type="text" id="whatsappNumber" inputmode="numeric" pattern="[0-9]*" maxlength="15" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="e.g., 8598899371">
                             </div>
                         </div>
+
                         <div>
                             <label for="amountPaid" class="block text-sm font-medium text-gray-700">Paid Amount (₹)</label>
                             <input type="number" id="amountPaid" value="0" min="0" step="0.01" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
@@ -248,10 +241,7 @@
                             Add Item to Bill
                         </button>
 
-                        <button id="printBtn" class="w-full bg-green-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors duration-300 disabled:opacity-50">
-                            <span>Download PDF & Send</span>
-                        </button>
-                        
+                        <button id="printBtn" class="w-full bg-green-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors duration-300">Print/Save/Send</button>
                         <button id="downloadLogBtn" class="w-full bg-teal-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 transition-colors duration-300">Download Full Log (Excel)</button>
                     </div>
                 </div>
@@ -260,7 +250,7 @@
             <div class="lg:col-span-8">
                 <div id="invoice-print-area" class="bg-white p-8 print:p-6 rounded-xl shadow-lg">
                     <div class="flex items-center mb-8 print:mb-4 border-b pb-6 print:pb-4 space-x-6">
-                        <img src="https://brsujit.github.io/messages/logo/kriya_logo.jpeg" alt="Prajnana Mission Logo" class="h-24 print:h-20 w-auto">
+                        <img src="https://gccgkt.github.io/messages/logo/kriya_logo.jpeg" alt="Prajnana Mission Logo" class="h-24 print:h-20 w-auto">
                         <div>
                              <h1 class="text-3xl print:text-2xl font-extrabold text-gray-800 tracking-wider">PRAJNAJNA MISSION</h1>
                              <p class="text-sm text-gray-500 mt-1">Jagatpur, Cuttack - 754021 | Contact Number - +918598899371</p>
@@ -293,7 +283,7 @@
                             <thead>
                                 <tr class="bg-gray-100 text-sm font-semibold text-gray-600">
                                     <th class="p-3">#</th>
-                                    <th class="p-3 w-2/5">TITLE (AUTHOR)</th>
+                                    <th class="p-3 w-2/f">TITLE (AUTHOR)</th>
                                     <th class="p-3 text-center">QTY</th>
                                     <th class="p-3 text-right">RATE (₹)</th>
                                     <th class="p-3 text-right">AMOUNT (₹)</th>
@@ -354,8 +344,8 @@
             </div>
         </div>
     </div>
-    
-    <script>
+
+  <script>
         document.addEventListener('DOMContentLoaded', function () {
             
             // --- PWA Install Logic ---
@@ -498,10 +488,6 @@
             // --- MAIN BILLING APP LOGIC ---
             function initializeBillingApp() {
                 
-                // --- Load PDF Libraries ---
-                const { jsPDF } = window.jspdf;
-                const html2canvas = window.html2canvas;
-
                 // --- BOOK DATABASE ---
                 const booksDB = [
                     { id: 'default', title: 'Select a Book...', author: '', rate: 0 },
@@ -630,14 +616,14 @@
                             const tr = document.createElement('tr');
                             tr.className = "text-sm text-gray-700";
                             tr.innerHTML = `
-                                <td class="p-3">${index + 1}</td>
+                                <td class.p-3">${index + 1}</td>
                                 <td class="p-3">
                                     <span class="font-semibold">${item.title}</span>
                                     <span class="block text-xs text-gray-500">${item.author}</span>
                                 </td>
                                 <td class="p-3 text-center">${item.qty}</td>
                                 <td class="p-3 text-right">${formatCurrency(item.rate)}</td>
-                                <td class.p-3 text-right font-semibold">${formatCurrency(item.amount)}</td>
+                                <td class="p-3 text-right font-semibold">${formatCurrency(item.amount)}</td>
                                 <td class="p-3 text-center no-print">
                                     <button class="delete-item-btn text-red-500 hover:text-red-700" data-index="${index}" aria-label="Delete item ${index + 1}">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -765,7 +751,7 @@
                     XLSX.writeFile(wb, filename);
                 };
 
-                // --- WhatsApp helpers ---
+                // --- WhatsApp helpers (These were in your original file) ---
                 const buildWhatsAppMessage = () => {
                     const invoiceNo = invoiceNumberEl.textContent.trim();
                     const date = invoiceDateEl.textContent.trim();
@@ -810,46 +796,20 @@ Thank you for your support.`;
                     if (phone) return `https://wa.me/${phone}?text=${enc}`;
                     return `https://wa.me/?text=${enc}`;
                 };
-                
-                // --- NEW: PDF Generation Function ---
-                const handleGeneratePdf = async () => {
-                    const invoiceElement = document.getElementById('invoice-print-area');
-                    const invoiceNo = invoiceNumberEl.textContent.trim();
-                    const filename = `Invoice-${invoiceNo}.pdf`;
-                    
-                    // Show loading state
-                    const originalText = printBtn.innerHTML;
-                    printBtn.disabled = true;
-                    printBtn.innerHTML = `<div class="spinner"></div><span>Generating...</span>`;
 
+                const openWhatsAppSafely = (url, waWinHandle) => {
                     try {
-                        const canvas = await html2canvas(invoiceElement, {
-                            scale: 2, // Higher scale for better quality
-                            useCORS: true,
-                            logging: false
-                        });
-                        
-                        const imgData = canvas.toDataURL('image/png');
-                        
-                        // Calculate PDF dimensions
-                        const pdf = new jsPDF({
-                            orientation: 'p', // portrait
-                            unit: 'px', // pixels
-                            format: [canvas.width, canvas.height]
-                        });
-                        
-                        pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
-                        pdf.save(filename); // Triggers download
-                        
+                        if (waWinHandle && !waWinHandle.closed) {
+                            waWinHandle.location = url;
+                        } else {
+                            window.open(url, '_blank');
+                        }
                     } catch (e) {
-                        console.error("Error generating PDF:", e);
-                        alert("Could not generate PDF. Please try again.");
-                    } finally {
-                        // Restore button
-                        printBtn.disabled = false;
-                        printBtn.innerHTML = originalText;
+                        console.warn('Fallback open due to popup restriction:', e);
+                        window.open(url, '_blank');
                     }
                 };
+                // --- End of WhatsApp helpers ---
 
                 const initialize = () => {
                     loadInvoiceCounter();
@@ -877,10 +837,12 @@ Thank you for your support.`;
                     }
                 });
 
-                // ***** THIS IS THE MODIFIED BUTTON LOGIC *****
+                // ***** THIS IS THE FIX *****
+                // This is the original logic from your index.html, which is
+                // designed to work with popup blockers.
                 if(printBtn) printBtn.addEventListener('click', () => {
                     if (billItems.length === 0) {
-                        alert('Your bill is empty. Please add items before generating a PDF.');
+                        alert('Your bill is empty. Please add items before printing/sending.');
                         return;
                     }
 
@@ -892,18 +854,35 @@ Thank you for your support.`;
                     const msg = buildWhatsAppMessage();
                     const waUrl = buildWhatsAppURL(phone, msg);
 
-                    // 3. Open WhatsApp *immediately* to avoid popup blocker
+                    // 3. Open a blank tab *immediately*
+                    // This is the key to defeating most popup blockers
+                    let waWin = null;
                     try {
-                        window.open(waUrl, '_blank');
+                         waWin = window.open('about:blank', '_blank');
                     } catch (e) {
-                        console.warn('Could not open WhatsApp tab, possibly blocked.', e);
+                        console.warn('Popup blocked immediately. WhatsApp must be opened manually.', e);
                     }
+
+                    // 4. Set up the 'afterprint' event
+                    let sentAlready = false;
+                    const doSend = () => {
+                        if (sentAlready) return;
+                        sentAlready = true;
+                        window.removeEventListener('afterprint', doSend);
+                        // 5. Redirect the blank tab (or open a new one)
+                        openWhatsAppSafely(waUrl, waWin);
+                    };
+
+                    window.addEventListener('afterprint', doSend);
                     
-                    // 4. Generate and download the PDF
-                    // This happens after opening WhatsApp
-                    handleGeneratePdf();
+                    // 6. Call print() *after* opening the blank tab
+                    window.print();
+
+                    // 7. Fallback timer
+                    setTimeout(doSend, 1500);
                 });
-                // ***** END OF MODIFIED LOGIC *****
+                // ***** END OF FIX *****
+
 
                 // --- INITIALIZATION ---
                 loadSalesLog();
@@ -915,5 +894,3 @@ Thank you for your support.`;
             
         });
     </script>
-</body>
-</html>
