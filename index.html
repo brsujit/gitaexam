@@ -347,33 +347,39 @@
    <script>
         document.addEventListener('DOMContentLoaded', function () {
             
-            // --- PWA Install Logic (MOVED & ENHANCED) ---
+            // --- PWA Install Logic ---
             let deferredPrompt;
             const loginInstallBtn = document.getElementById('loginInstallBtn');
-            const mainInstallBtn = document.getElementById('installAppBtn'); // This is the one in the app
+            const mainInstallBtn = document.getElementById('installAppBtn');
             const iosSheet = document.getElementById('iosSheet');
             const closeIosBtn = document.getElementById('closeIos');
             const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
             const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
 
             const updateInstallButtons = (isEligible) => {
+                const buttons = [loginInstallBtn, mainInstallBtn].filter(btn => btn); // Get only buttons that exist
+
                 if (isStandalone) {
-                    loginInstallBtn.hidden = true;
-                    mainInstallBtn.disabled = true; 
-                    mainInstallBtn.textContent = "Installed";
+                    buttons.forEach(btn => {
+                        btn.hidden = true;
+                        if (btn.id === 'installAppBtn') {
+                            btn.disabled = true;
+                            btn.textContent = "Installed";
+                        }
+                    });
                     return;
                 }
                 
-                if (isIOS) {
-                    loginInstallBtn.hidden = false;
-                    mainInstallBtn.disabled = false;
-                } else if (isEligible) {
-                    loginInstallBtn.hidden = false;
-                    mainInstallBtn.disabled = false;
+                if (isIOS || isEligible) {
+                    buttons.forEach(btn => {
+                        btn.hidden = false;
+                        if (btn.id === 'installAppBtn') btn.disabled = false;
+                    });
                 } else {
-                    // Button remains hidden if not on iOS and not eligible
-                    loginInstallBtn.hidden = true;
-                    mainInstallBtn.disabled = true;
+                    buttons.forEach(btn => {
+                        btn.hidden = true;
+                        if (btn.id === 'installAppBtn') btn.disabled = true;
+                    });
                 }
             };
             
@@ -385,7 +391,7 @@
             
             const handleInstallClick = async () => {
                 if (isIOS) {
-                    iosSheet.classList.add('open');
+                    if (iosSheet) iosSheet.classList.add('open');
                     return;
                 }
                 if (!deferredPrompt) return;
@@ -396,21 +402,29 @@
                     console.log('User accepted the A2HS prompt');
                 }
                 deferredPrompt = null;
-                updateInstallButtons(false); // Hide/disable buttons after choice
+                updateInstallButtons(false);
             };
 
-            loginInstallBtn.addEventListener('click', handleInstallClick);
-            mainInstallBtn.addEventListener('click', handleInstallClick);
-            
-            closeIosBtn.addEventListener('click', () => iosSheet.classList.remove('open'));
-            iosSheet.addEventListener('click', (e) => {
-                if (e.target === iosSheet) iosSheet.classList.remove('open');
-            });
+            // **FIX**: Added safety checks. Only add listeners if the buttons exist.
+            if (loginInstallBtn) {
+                loginInstallBtn.addEventListener('click', handleInstallClick);
+            }
+            if (mainInstallBtn) {
+                mainInstallBtn.addEventListener('click', handleInstallClick);
+            }
+            if (closeIosBtn) {
+                closeIosBtn.addEventListener('click', () => iosSheet.classList.remove('open'));
+            }
+            if (iosSheet) {
+                iosSheet.addEventListener('click', (e) => {
+                    if (e.target === iosSheet) iosSheet.classList.remove('open');
+                });
+            }
 
             // Initial check
-            updateInstallButtons(false); // Start hidden/disabled
+            updateInstallButtons(false); 
             if (isIOS && !isStandalone) {
-                updateInstallButtons(true); // Show iOS "how-to" button immediately
+                updateInstallButtons(true);
             }
             
             window.addEventListener('appinstalled', () => {
@@ -430,38 +444,47 @@
 
             const CORRECT_PASSWORD = 'anirvana';
 
-            showPwEl.addEventListener('change', (e) => {
-                passwordEl.type = e.target.checked ? 'text' : 'password';
-            });
+            // **FIX**: Added safety checks for all login elements.
+            if (showPwEl && passwordEl) {
+                showPwEl.addEventListener('change', (e) => {
+                    passwordEl.type = e.target.checked ? 'text' : 'password';
+                });
+            }
 
-            loginForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                statusEl.textContent = '';
-                statusEl.className = 'status';
-                
-                // ***** THIS IS THE FIX *****
-                // Added .trim() to remove any accidental whitespace
-                const password = passwordEl.value.trim(); 
+            if (loginForm) {
+                loginForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    if (statusEl) {
+                        statusEl.textContent = '';
+                        statusEl.className = 'status';
+                    }
 
-                if (password === CORRECT_PASSWORD) {
-                    // --- SUCCESS ---
-                    statusEl.textContent = 'Login successful! Loading app...';
-                    statusEl.classList.add('ok');
-                    
-                    setTimeout(() => {
-                        loginScreen.classList.add('hidden');
-                        mainContent.classList.remove('hidden');
-                        initializeBillingApp();
-                    }, 500); 
+                    const password = passwordEl ? passwordEl.value.trim() : '';
 
-                } else {
-                    // --- FAILURE ---
-                    statusEl.textContent = 'Incorrect password. Please try again.';
-                    statusEl.classList.add('err');
-                    passwordEl.value = '';
-                    passwordEl.focus();
-                }
-            });
+                    if (password === CORRECT_PASSWORD) {
+                        if (statusEl) {
+                            statusEl.textContent = 'Login successful! Loading app...';
+                            statusEl.classList.add('ok');
+                        }
+                        
+                        setTimeout(() => {
+                            if (loginScreen) loginScreen.classList.add('hidden');
+                            if (mainContent) mainContent.classList.remove('hidden');
+                            initializeBillingApp(); // Run the main app logic
+                        }, 500); 
+
+                    } else {
+                        if (statusEl) {
+                            statusEl.textContent = 'Incorrect password. Please try again.';
+                            statusEl.classList.add('err');
+                        }
+                        if (passwordEl) {
+                            passwordEl.value = '';
+                            passwordEl.focus();
+                        }
+                    }
+                });
+            }
             
             
             // --- MAIN BILLING APP LOGIC ---
@@ -798,17 +821,18 @@ Thank you for your support.`;
                 };
 
                 // --- EVENT LISTENERS ---
-                addItemBtn.addEventListener('click', handleAddItem);
-                downloadLogBtn.addEventListener('click', handleDownloadFullLog);
-                bookSelectEl.addEventListener('change', handleBookSelection);
+                // **FIX**: Added safety checks for all app elements.
+                if(addItemBtn) addItemBtn.addEventListener('click', handleAddItem);
+                if(downloadLogBtn) downloadLogBtn.addEventListener('click', handleDownloadFullLog);
+                if(bookSelectEl) bookSelectEl.addEventListener('change', handleBookSelection);
 
-                customerNameEl.addEventListener('input', renderBill);
-                customerAddressEl.addEventListener('input', renderBill);
-                countryCodeEl.addEventListener('input', renderBill);
-                whatsappNumberEl.addEventListener('input', renderBill);
-                amountPaidEl.addEventListener('input', renderBill);
+                if(customerNameEl) customerNameEl.addEventListener('input', renderBill);
+                if(customerAddressEl) customerAddressEl.addEventListener('input', renderBill);
+                if(countryCodeEl) countryCodeEl.addEventListener('input', renderBill);
+                if(whatsappNumberEl) whatsappNumberEl.addEventListener('input', renderBill);
+                if(amountPaidEl) amountPaidEl.addEventListener('input', renderBill);
                 
-                invoiceItemsEl.addEventListener('click', (e) => {
+                if(invoiceItemsEl) invoiceItemsEl.addEventListener('click', (e) => {
                     const deleteButton = e.target.closest('.delete-item-btn');
                     if (deleteButton) {
                         const indexToDelete = parseInt(deleteButton.dataset.index, 10);
@@ -817,7 +841,7 @@ Thank you for your support.`;
                     }
                 });
 
-                printBtn.addEventListener('click', () => {
+                if(printBtn) printBtn.addEventListener('click', () => {
                     if (billItems.length === 0) {
                         alert('Your bill is empty. Please add items before printing/sending.');
                         return;
@@ -844,7 +868,8 @@ Thank you for your support.`;
 
                 // --- INITIALIZATION ---
                 loadSalesLog();
-                populateBookDropdown();
+                // Check if dropdown exists before populating
+                if(bookSelectEl) populateBookDropdown();
                 initialize();
                 renderBill();
             
