@@ -344,7 +344,7 @@
         </div>
     </div>
 
-   <script>
+  <script>
         document.addEventListener('DOMContentLoaded', function () {
             
             // --- PWA Install Logic ---
@@ -615,14 +615,14 @@
                             const tr = document.createElement('tr');
                             tr.className = "text-sm text-gray-700";
                             tr.innerHTML = `
-                                <td class="p-3">${index + 1}</td>
+                                <td class.p-3">${index + 1}</td>
                                 <td class="p-3">
                                     <span class="font-semibold">${item.title}</span>
                                     <span class="block text-xs text-gray-500">${item.author}</span>
                                 </td>
                                 <td class="p-3 text-center">${item.qty}</td>
                                 <td class="p-3 text-right">${formatCurrency(item.rate)}</td>
-                                <td class.p-3 text-right font-semibold">${formatCurrency(item.amount)}</td>
+                                <td class="p-3 text-right font-semibold">${formatCurrency(item.amount)}</td>
                                 <td class="p-3 text-center no-print">
                                     <button class="delete-item-btn text-red-500 hover:text-red-700" data-index="${index}" aria-label="Delete item ${index + 1}">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -750,7 +750,7 @@
                     XLSX.writeFile(wb, filename);
                 };
 
-                // --- WhatsApp helpers ---
+                // --- WhatsApp helpers (These were in your original file) ---
                 const buildWhatsAppMessage = () => {
                     const invoiceNo = invoiceNumberEl.textContent.trim();
                     const date = invoiceDateEl.textContent.trim();
@@ -808,6 +808,7 @@ Thank you for your support.`;
                         window.open(url, '_blank');
                     }
                 };
+                // --- End of WhatsApp helpers ---
 
                 const initialize = () => {
                     loadInvoiceCounter();
@@ -836,7 +837,8 @@ Thank you for your support.`;
                 });
 
                 // ***** THIS IS THE FIX *****
-                // The logic for the print button has been re-ordered.
+                // This is the original logic from your index.html, which is
+                // designed to work with popup blockers.
                 if(printBtn) printBtn.addEventListener('click', () => {
                     if (billItems.length === 0) {
                         alert('Your bill is empty. Please add items before printing/sending.');
@@ -851,30 +853,35 @@ Thank you for your support.`;
                     const msg = buildWhatsAppMessage();
                     const waUrl = buildWhatsAppURL(phone, msg);
 
-                    // 3. Set up the 'afterprint' event to open WhatsApp
+                    // 3. Open a blank tab *immediately*
+                    // This is the key to defeating most popup blockers
+                    let waWin = null;
+                    try {
+                         waWin = window.open('about:blank', '_blank');
+                    } catch (e) {
+                        console.warn('Popup blocked immediately. WhatsApp must be opened manually.', e);
+                    }
+
+                    // 4. Set up the 'afterprint' event
                     let sentAlready = false;
                     const doSend = () => {
                         if (sentAlready) return;
                         sentAlready = true;
                         window.removeEventListener('afterprint', doSend);
-                        
-                        // 4. Try to open WhatsApp *after* printing
-                        try {
-                            window.open(waUrl, '_blank');
-                        } catch (e) {
-                            console.warn('Could not open WhatsApp tab, possibly blocked.', e);
-                        }
+                        // 5. Redirect the blank tab (or open a new one)
+                        openWhatsAppSafely(waUrl, waWin);
                     };
 
                     window.addEventListener('afterprint', doSend);
                     
-                    // 5. Call print() *before* trying to open the popup.
+                    // 6. Call print() *after* opening the blank tab
                     window.print();
-                    
-                    // 6. Fallback timer
+
+                    // 7. Fallback timer
                     setTimeout(doSend, 1500);
                 });
                 // ***** END OF FIX *****
+
 
                 // --- INITIALIZATION ---
                 loadSalesLog();
