@@ -344,11 +344,10 @@
         </div>
     </div>
 
-    <script>
+   <script>
         document.addEventListener('DOMContentLoaded', function () {
             
             // --- PWA Install Logic (MOVED & ENHANCED) ---
-            // This now runs immediately to catch the 'beforeinstallprompt' event.
             let deferredPrompt;
             const loginInstallBtn = document.getElementById('loginInstallBtn');
             const mainInstallBtn = document.getElementById('installAppBtn'); // This is the one in the app
@@ -360,21 +359,19 @@
             const updateInstallButtons = (isEligible) => {
                 if (isStandalone) {
                     loginInstallBtn.hidden = true;
-                    mainInstallBtn.disabled = true; // Or hide, disabled is from original
+                    mainInstallBtn.disabled = true; 
                     mainInstallBtn.textContent = "Installed";
                     return;
                 }
                 
                 if (isIOS) {
-                    // On iOS, we just show the "how-to" button
                     loginInstallBtn.hidden = false;
                     mainInstallBtn.disabled = false;
                 } else if (isEligible) {
-                    // On Android/Desktop, show the real install button
                     loginInstallBtn.hidden = false;
                     mainInstallBtn.disabled = false;
                 } else {
-                    // Not eligible
+                    // Button remains hidden if not on iOS and not eligible
                     loginInstallBtn.hidden = true;
                     mainInstallBtn.disabled = true;
                 }
@@ -402,11 +399,9 @@
                 updateInstallButtons(false); // Hide/disable buttons after choice
             };
 
-            // Add listener to BOTH buttons
             loginInstallBtn.addEventListener('click', handleInstallClick);
             mainInstallBtn.addEventListener('click', handleInstallClick);
             
-            // iOS Sheet listeners
             closeIosBtn.addEventListener('click', () => iosSheet.classList.remove('open'));
             iosSheet.addEventListener('click', (e) => {
                 if (e.target === iosSheet) iosSheet.classList.remove('open');
@@ -421,7 +416,7 @@
             window.addEventListener('appinstalled', () => {
                 console.log('App installed');
                 deferredPrompt = null;
-                updateInstallButtons(false); // Hide/disable all install buttons
+                updateInstallButtons(false); 
             });
 
             // --- LOGIN AUTHENTICATION LOGIC ---
@@ -433,34 +428,31 @@
             const statusEl = document.getElementById('status');
             const showPwEl = document.getElementById('showPw');
 
-            // Set your password here
             const CORRECT_PASSWORD = 'anirvana';
 
-            // Show/hide password functionality
             showPwEl.addEventListener('change', (e) => {
                 passwordEl.type = e.target.checked ? 'text' : 'password';
             });
 
-            // Handle login form submission
             loginForm.addEventListener('submit', (e) => {
                 e.preventDefault();
                 statusEl.textContent = '';
                 statusEl.className = 'status';
-                const password = passwordEl.value;
+                
+                // ***** THIS IS THE FIX *****
+                // Added .trim() to remove any accidental whitespace
+                const password = passwordEl.value.trim(); 
 
                 if (password === CORRECT_PASSWORD) {
                     // --- SUCCESS ---
                     statusEl.textContent = 'Login successful! Loading app...';
                     statusEl.classList.add('ok');
                     
-                    // Hide login screen and show the main app
                     setTimeout(() => {
                         loginScreen.classList.add('hidden');
                         mainContent.classList.remove('hidden');
-                        
-                        // NOW that the user is logged in, initialize the billing app
                         initializeBillingApp();
-                    }, 500); // Short delay to read the message
+                    }, 500); 
 
                 } else {
                     // --- FAILURE ---
@@ -473,14 +465,10 @@
             
             
             // --- MAIN BILLING APP LOGIC ---
-            // All of your original index.html JS is wrapped in this function.
-            // It will only be CALLED after a successful login.
+            // This function only runs AFTER a successful login
             
             function initializeBillingApp() {
                 
-                // (The PWA logic was here, but has been moved outside
-                // this function so it can run immediately on page load.)
-
                 // --- BOOK DATABASE ---
                 const booksDB = [
                     { id: 'default', title: 'Select a Book...', author: '', rate: 0 },
@@ -668,4 +656,199 @@
 
                     bookSelectEl.value = 'default';
                     quantityEl.value = '1';
-                    rateEl.value = '0
+                    rateEl.value = '0.00';
+                    
+                    renderBill();
+                };
+
+                const handleSaveLog = () => {
+                    if (billItems.length === 0) return;
+
+                    const invoiceNo = invoiceNumberEl.textContent;
+                    const date = invoiceDateEl.textContent;
+                    const customer = customerNameEl.value || 'Walk-in Customer';
+                    
+                    const total = billItems.reduce((acc, item) => acc + item.amount, 0);
+                    const paid = parseFloat(amountPaidEl.value) || 0;
+                    const due = total - paid;
+
+                    billItems.forEach((item, index) => {
+                        salesLogDatabase.push({
+                            invoiceNo,
+                            date,
+                            customer,
+                            itemNo: index + 1,
+                            title: item.title,
+                            author: item.author,
+                            qty: item.qty,
+                            rate: item.rate,
+                            amount: item.amount,
+                            total,
+                            paidAmount: paid,
+                            dueAmount: due
+                        });
+                    });
+                    persistSalesLog();
+                    console.log(`Invoice ${invoiceNo} saved to log. Log entries: ${salesLogDatabase.length}`);
+                };
+
+                const handleDownloadFullLog = () => {
+                    if (salesLogDatabase.length === 0) {
+                        alert('The sales log is empty. Save an invoice first by printing it.');
+                        return;
+                    }
+
+                    const data = [
+                        ["Invoice No", "Date", "Customer", "#", "Book Title", "Author", "Qty", "Rate (₹)", "Amount (₹)", "Invoice Total", "Paid Amount", "Due Amount"]
+                    ];
+
+                    salesLogDatabase.forEach(entry => {
+                        data.push([
+                            entry.invoiceNo,
+                            entry.date,
+                            entry.customer,
+                            entry.itemNo,
+                            entry.title,
+                            entry.author,
+                            entry.qty,
+                            entry.rate.toFixed(2),
+                            entry.amount.toFixed(2),
+                            entry.total.toFixed(2),
+                            entry.paidAmount.toFixed(2),
+                            entry.dueAmount.toFixed(2)
+                        ]);
+                    });
+
+                    const ws = XLSX.utils.aoa_to_sheet(data);
+                    const wb = XLSX.utils.book_new();
+                    XLSX.utils.book_append_sheet(wb, ws, "SalesLog");
+
+                    const today = new Date();
+                    const d = String(today.getDate()).padStart(2, '0');
+                    const m = String(today.getMonth() + 1).padStart(2, '0');
+                    const y = today.getFullYear();
+                    const filename = `PrajnanaMission_SalesLog_${y}${m}${d}.xlsx`;
+                    
+                    XLSX.writeFile(wb, filename);
+                };
+
+                // --- WhatsApp helpers ---
+                const buildWhatsAppMessage = () => {
+                    const invoiceNo = invoiceNumberEl.textContent.trim();
+                    const date = invoiceDateEl.textContent.trim();
+                    const customer = (customerNameEl.value || 'Walk-in Customer').trim();
+                    const address = (customerAddressEl.value || '').trim();
+                    const contact = getDisplayPhone();
+
+                    const itemsLines = billItems.map((item, i) => {
+                        const authorPart = item.author ? ` (${item.author})` : '';
+                        return `${i + 1}) ${item.title}${authorPart} - ${item.qty} x ₹${item.rate.toFixed(2)} = ₹${item.amount.toFixed(2)}`;
+                    }).join('\n');
+
+                    const total = billItems.reduce((acc, item) => acc + item.amount, 0);
+                    const paid = parseFloat(amountPaidEl.value) || 0;
+                    const due = total - paid;
+
+                    return `Prajnana Mission Invoice
+Invoice No: ${invoiceNo}
+Date: ${date}
+Customer: ${customer}${address ? `\nAddress: ${address}` : ''}${contact ? `\nContact: ${contact}` : ''}
+
+Items:
+${itemsLines || '-'}
+-----------------------
+Total: ₹${total.toFixed(2)}
+Paid: ₹${paid.toFixed(2)}
+Due: ₹${due.toFixed(2)}
+
+Thank you for your support.`;
+                };
+
+                const getWhatsAppPhone = () => {
+                    const code = (countryCodeEl.value || '').replace(/[^\d]/g, '');
+                    const num = (whatsappNumberEl.value || '').replace(/[^\d]/g, '');
+                    if (!num) return '';
+                    const finalCode = code || '91';
+                    return `${finalCode}${num}`;
+                };
+
+                const buildWhatsAppURL = (phone, msg) => {
+                    const enc = encodeURIComponent(msg);
+                    if (phone) return `https://wa.me/${phone}?text=${enc}`;
+                    return `https://wa.me/?text=${enc}`;
+                };
+
+                const openWhatsAppSafely = (url, waWinHandle) => {
+                    try {
+                        if (waWinHandle && !waWinHandle.closed) {
+                            waWinHandle.location = url;
+                        } else {
+                            window.open(url, '_blank');
+                        }
+                    } catch (e) {
+                        console.warn('Fallback open due to popup restriction:', e);
+                        window.open(url, '_blank');
+                    }
+                };
+
+                const initialize = () => {
+                    loadInvoiceCounter();
+                    invoiceDateEl.textContent = getFormattedDate();
+                    invoiceNumberEl.textContent = getInvoiceNumber();
+                };
+
+                // --- EVENT LISTENERS ---
+                addItemBtn.addEventListener('click', handleAddItem);
+                downloadLogBtn.addEventListener('click', handleDownloadFullLog);
+                bookSelectEl.addEventListener('change', handleBookSelection);
+
+                customerNameEl.addEventListener('input', renderBill);
+                customerAddressEl.addEventListener('input', renderBill);
+                countryCodeEl.addEventListener('input', renderBill);
+                whatsappNumberEl.addEventListener('input', renderBill);
+                amountPaidEl.addEventListener('input', renderBill);
+                
+                invoiceItemsEl.addEventListener('click', (e) => {
+                    const deleteButton = e.target.closest('.delete-item-btn');
+                    if (deleteButton) {
+                        const indexToDelete = parseInt(deleteButton.dataset.index, 10);
+                        billItems.splice(indexToDelete, 1);
+                        renderBill();
+                    }
+                });
+
+                printBtn.addEventListener('click', () => {
+                    if (billItems.length === 0) {
+                        alert('Your bill is empty. Please add items before printing/sending.');
+                        return;
+                    }
+
+                    handleSaveLog();
+                    const phone = getWhatsAppPhone();
+                    const msg = buildWhatsAppMessage();
+                    const waUrl = buildWhatsAppURL(phone, msg);
+                    const waWin = window.open('about:blank', '_blank');
+
+                    let sentAlready = false;
+                    const doSend = () => {
+                        if (sentAlready) return;
+                        sentAlready = true;
+                        window.removeEventListener('afterprint', doSend);
+                        openWhatsAppSafely(waUrl, waWin);
+                    };
+
+                    window.addEventListener('afterprint', doSend);
+                    window.print();
+                    setTimeout(doSend, 1500);
+                });
+
+                // --- INITIALIZATION ---
+                loadSalesLog();
+                populateBookDropdown();
+                initialize();
+                renderBill();
+            
+            } // --- End of initializeBillingApp() function ---
+            
+        });
+    </script>
