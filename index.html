@@ -357,7 +357,7 @@
             const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
 
             const updateInstallButtons = (isEligible) => {
-                const buttons = [loginInstallBtn, mainInstallBtn].filter(btn => btn); // Get only buttons that exist
+                const buttons = [loginInstallBtn, mainInstallBtn].filter(btn => btn); 
 
                 if (isStandalone) {
                     buttons.forEach(btn => {
@@ -405,7 +405,6 @@
                 updateInstallButtons(false);
             };
 
-            // **FIX**: Added safety checks. Only add listeners if the buttons exist.
             if (loginInstallBtn) {
                 loginInstallBtn.addEventListener('click', handleInstallClick);
             }
@@ -421,7 +420,6 @@
                 });
             }
 
-            // Initial check
             updateInstallButtons(false); 
             if (isIOS && !isStandalone) {
                 updateInstallButtons(true);
@@ -444,7 +442,6 @@
 
             const CORRECT_PASSWORD = 'anirvana';
 
-            // **FIX**: Added safety checks for all login elements.
             if (showPwEl && passwordEl) {
                 showPwEl.addEventListener('change', (e) => {
                     passwordEl.type = e.target.checked ? 'text' : 'password';
@@ -470,7 +467,7 @@
                         setTimeout(() => {
                             if (loginScreen) loginScreen.classList.add('hidden');
                             if (mainContent) mainContent.classList.remove('hidden');
-                            initializeBillingApp(); // Run the main app logic
+                            initializeBillingApp(); 
                         }, 500); 
 
                     } else {
@@ -488,8 +485,6 @@
             
             
             // --- MAIN BILLING APP LOGIC ---
-            // This function only runs AFTER a successful login
-            
             function initializeBillingApp() {
                 
                 // --- BOOK DATABASE ---
@@ -627,7 +622,7 @@
                                 </td>
                                 <td class="p-3 text-center">${item.qty}</td>
                                 <td class="p-3 text-right">${formatCurrency(item.rate)}</td>
-                                <td class="p-3 text-right font-semibold">${formatCurrency(item.amount)}</td>
+                                <td class.p-3 text-right font-semibold">${formatCurrency(item.amount)}</td>
                                 <td class="p-3 text-center no-print">
                                     <button class="delete-item-btn text-red-500 hover:text-red-700" data-index="${index}" aria-label="Delete item ${index + 1}">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -821,7 +816,6 @@ Thank you for your support.`;
                 };
 
                 // --- EVENT LISTENERS ---
-                // **FIX**: Added safety checks for all app elements.
                 if(addItemBtn) addItemBtn.addEventListener('click', handleAddItem);
                 if(downloadLogBtn) downloadLogBtn.addEventListener('click', handleDownloadFullLog);
                 if(bookSelectEl) bookSelectEl.addEventListener('change', handleBookSelection);
@@ -841,34 +835,49 @@ Thank you for your support.`;
                     }
                 });
 
+                // ***** THIS IS THE FIX *****
+                // The logic for the print button has been re-ordered.
                 if(printBtn) printBtn.addEventListener('click', () => {
                     if (billItems.length === 0) {
                         alert('Your bill is empty. Please add items before printing/sending.');
                         return;
                     }
 
+                    // 1. Save log
                     handleSaveLog();
+
+                    // 2. Prepare WhatsApp info
                     const phone = getWhatsAppPhone();
                     const msg = buildWhatsAppMessage();
                     const waUrl = buildWhatsAppURL(phone, msg);
-                    const waWin = window.open('about:blank', '_blank');
 
+                    // 3. Set up the 'afterprint' event to open WhatsApp
                     let sentAlready = false;
                     const doSend = () => {
                         if (sentAlready) return;
                         sentAlready = true;
                         window.removeEventListener('afterprint', doSend);
-                        openWhatsAppSafely(waUrl, waWin);
+                        
+                        // 4. Try to open WhatsApp *after* printing
+                        try {
+                            window.open(waUrl, '_blank');
+                        } catch (e) {
+                            console.warn('Could not open WhatsApp tab, possibly blocked.', e);
+                        }
                     };
 
                     window.addEventListener('afterprint', doSend);
+                    
+                    // 5. Call print() *before* trying to open the popup.
                     window.print();
+                    
+                    // 6. Fallback timer
                     setTimeout(doSend, 1500);
                 });
+                // ***** END OF FIX *****
 
                 // --- INITIALIZATION ---
                 loadSalesLog();
-                // Check if dropdown exists before populating
                 if(bookSelectEl) populateBookDropdown();
                 initialize();
                 renderBill();
